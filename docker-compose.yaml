@@ -1,0 +1,54 @@
+
+services:
+  postgreSql:
+    restart: always
+    platform: linux/x86_64
+    image: postgres:18-alpine3.22
+    ports:
+      - 5432:5432
+    volumes:
+      - database_volume:/var/lib/postgresql
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=triplit
+    networks:
+      - triplit-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5 
+
+  web:
+    platform: linux/x86_64
+    build:
+      context: ./
+      dockerfile: ${DOCKERFILE:-Dockerfile.dev}
+      target: development 
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    # volumes:
+    #   - ./:/app
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /app
+          ignore:
+            - node_modules/
+            - .next/
+        - action: rebuild
+          path: package.json
+    depends_on:
+      postgreSql: 
+        condition: service_healthy
+
+networks:
+  triplit-network:
+    driver: bridge
+
+volumes:
+  database_volume:
