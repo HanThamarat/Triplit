@@ -30,8 +30,9 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-    # volumes:
-    #   - ./:/app
+    volumes:
+      - ./.env:/app/.env
+      - ./src:/app/src
     develop:
       watch:
         - action: sync
@@ -42,6 +43,8 @@ services:
             - .next/
         - action: rebuild
           path: package.json
+    networks:
+      - triplit-network
     depends_on:
       postgreSql: 
         condition: service_healthy

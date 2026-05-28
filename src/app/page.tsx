@@ -1,9 +1,14 @@
+"use client"
+
+import LoginButton from "./components/LoginButton";
 
 
 export default function Home() {
   return (
    <>
-   sfffd
+    <div className="h-screen flex justify-center items-center">
+      <LoginButton />
+    </div>
    </>
   );
 }
