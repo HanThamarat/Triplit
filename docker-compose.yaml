@@ -31,8 +31,8 @@ services:
     environment:
       - NODE_ENV=development
     volumes:
-      - ./.env:/app/.env
-      - ./src:/app/src
+      - ./:/app
+      - /app/node_modules/
     develop:
       watch:
         - action: sync
