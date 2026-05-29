@@ -4,7 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   output: "standalone",
-  allowedDevOrigins: []
+  allowedDevOrigins: [],
+  serverExternalPackages: ["typeorm", "pg", "reflect-metadata"],
 };
 
 export default nextConfig;

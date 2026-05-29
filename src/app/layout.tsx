@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-
 export const metadata: Metadata = {
   title: "Triplit",
   description: "Triplit easy to share.",
+  icons: {
+    icon: '/icon.svg'
+  }
 };
 
 export default function RootLayout({
@@ -17,7 +19,9 @@ export default function RootLayout({
       lang="en"
       className={`text-[12px]`}
     >
-      <body>
+      <body
+        cz-shortcut-listen="true"
+      >
         {children}
       </body>
     </html>
