@@ -1,7 +1,7 @@
 "use client";
 
 import ExpenseView from "../../components/ExpenseView";
-import { useDashboard } from "../DashboardContext";
+import { useDashboard } from "../layout/DashboardContext";
 
 export default function ExpensesDashboardPage() {
   const { activeTrip, handleUpdateTripState } = useDashboard();

@@ -5,8 +5,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FiBriefcase, FiCpu, FiDollarSign, FiLogOut, FiMenu, FiX } from "react-icons/fi";
 import { useDashboard } from "./DashboardContext";
-import ThemeToggle from "../components/ThemeToggle";
-import Logo from "../components/Logo";
+import ThemeToggle from "../../components/ThemeToggle";
+import Logo from "../../components/Logo";
+import { authClient } from "@/lib/auth-client";
 
 interface DashboardLayoutClientProps {
   user: {
@@ -39,6 +40,18 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
 
   // Calculate totals
   const totalBudget = activeTrip.expenses.reduce((acc, ex) => acc + ex.amount, 0);
+
+  const signOut = async () => {
+    const data = await authClient.signOut({
+      fetchOptions: () => {
+        router.push("/authentication");
+      }
+    });
+
+    if (data.data?.success) {
+      router.push("/authentication");
+    }
+  }
 
   const sidebarContent = (
     <>
@@ -119,10 +132,10 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
           </div>
         </div>
         <button
-          onClick={() => router.push("/")}
+          onClick={signOut}
           className="w-full py-2 px-3 rounded-lg border border-pearl-border dark:border-obsidian-border hover:bg-rose-accent/10 hover:border-rose-accent/30 text-pearl-muted hover:text-rose-accent dark:hover:text-rose-accent transition-all text-[11px] font-semibold flex items-center justify-center gap-2 cursor-pointer"
         >
-          <FiLogOut className="w-3.5 h-3.5" /> Back to Landing
+          <FiLogOut className="w-3.5 h-3.5" /> Log Out
         </button>
       </div>
     </>
@@ -166,7 +179,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
       </aside>
 
       {/* MAIN WORKSPACE */}
-      <main className="flex-1 min-h-screen overflow-y-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 relative pt-16 lg:pt-6">
+      <main className="flex-1 h-[100vh] mt-[20px] sm:mt-[55px] lg:mt-0 overflow-y-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 relative pt-16 lg:pt-6">
         {/* Decorative glow */}
         <div className="absolute top-[10%] right-[10%] w-[30%] h-[30%] bg-blue-primary/[0.03] dark:bg-gold/[0.03] rounded-full blur-[100px] pointer-events-none" />
 

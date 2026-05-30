@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FiCalendar, FiMapPin, FiPlus, FiTrash2, FiClock, FiCpu } from "react-icons/fi";
-import { useDashboard } from "./DashboardContext";
+import { useDashboard } from "./layout/DashboardContext";
 
 export default function DashboardPage() {
   const {

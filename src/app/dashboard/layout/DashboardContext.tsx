@@ -115,6 +115,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved) as Trip[];
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTrips(parsed);
         if (parsed.length > 0) {
           setSelectedTripId(parsed[0].id);

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Syne, DM_Sans } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const syne = Syne({
+const syne = DM_Sans({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${dmSans.variable} antialiased`}
+      className={`${syne.variable} ${dmSans.variable} text-[14px] antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -51,7 +51,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans min-h-screen bg-[#F8FAFD] text-slate-900 dark:bg-[#0A0A0F] dark:text-stone-100 transition-colors duration-500">
+      <body className="font-sans min-h-screen bg-[#F8FAFD] text-slate-900 dark:bg-[#0A0A0F] dark:text-stone-100 transition-colors duration-500" cz-shortcut-listen="true">
         {children}
       </body>
     </html>
