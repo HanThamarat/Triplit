@@ -1,7 +1,7 @@
 "use client";
 
 import AIChatView from "../../components/AIChatView";
-import { useDashboard } from "../DashboardContext";
+import { useDashboard } from "../layout/DashboardContext";
 
 export default function AIDashboardPage() {
   const { activeTrip, handleImportActivities, handleImportExpenses } = useDashboard();

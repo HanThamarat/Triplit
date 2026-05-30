@@ -11,19 +11,12 @@ import {
   FiZap,
   FiShield,
   FiGlobe,
-  FiMenu,
-  FiX,
 } from "react-icons/fi";
-import ThemeToggle from "./ThemeToggle";
 import Logo from "./Logo";
+import Nav from "../content-landing/Nav";
 
-interface LandingViewProps {
-  onLaunchApp: () => void;
-}
-
-export default function LandingView({ onLaunchApp }: LandingViewProps) {
+export default function LandingView() {
   const [activePeekTab, setActivePeekTab] = useState<"ai" | "split" | "minim">("ai");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden aurora-mesh noise-overlay">
@@ -32,60 +25,7 @@ export default function LandingView({ onLaunchApp }: LandingViewProps) {
       <div className="fixed bottom-[10%] right-[-12%] w-[50%] h-[50%] bg-ember/[0.03] rounded-full blur-[160px] pointer-events-none" />
       <div className="fixed top-[40%] left-[50%] w-[35%] h-[35%] bg-luxe/[0.02] rounded-full blur-[120px] pointer-events-none" />
 
-      {/* ─── Navigation ─── */}
-      <nav className="sticky top-0 z-50 w-full px-4 sm:px-6 py-3.5 glass-panel">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Logo size={36} />
-            <span className="font-display font-extrabold text-xl tracking-tight text-stone-900 dark:text-stone-100">
-              triplit
-            </span>
-          </div>
-
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8 text-[13px] font-medium text-stone-500 dark:text-stone-400">
-            <a href="#features" className="hover:text-gold transition-colors duration-200">Features</a>
-            <a href="#peek" className="hover:text-gold transition-colors duration-200">Live Preview</a>
-            <a href="#testimonials" className="hover:text-gold transition-colors duration-200">Testimonials</a>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* <ThemeToggle /> */}
-            <button
-              onClick={onLaunchApp}
-              className="hidden sm:flex relative overflow-hidden group px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-gold to-gold-dark text-obsidian shadow-lg shadow-gold/20 hover:shadow-gold/40 hover:scale-[1.03] active:scale-95 transition-all duration-300 cursor-pointer"
-            >
-              <span className="relative z-10 flex items-center gap-1.5">
-                Launch App <FiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </button>
-
-            {/* Mobile Hamburger */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-card text-stone-600 dark:text-stone-300 cursor-pointer"
-              aria-label="Toggle Menu"
-            >
-              {mobileMenuOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu Dropdown */}
-        {mobileMenuOpen && (
-          <div className="md:hidden mt-3 pb-4 border-t border-pearl-border/50 dark:border-obsidian-border/50 pt-4 flex flex-col gap-3 animate-text-reveal">
-            <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-gold transition-colors px-2 py-1.5">Features</a>
-            <a href="#peek" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-gold transition-colors px-2 py-1.5">Live Preview</a>
-            <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-gold transition-colors px-2 py-1.5">Testimonials</a>
-            <button
-              onClick={() => { setMobileMenuOpen(false); onLaunchApp(); }}
-              className="sm:hidden w-full px-5 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-gold to-gold-dark text-obsidian shadow-lg shadow-gold/20 cursor-pointer flex items-center justify-center gap-1.5 mt-1"
-            >
-              Launch App <FiArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-      </nav>
+      <Nav />     
 
       {/* ─── HERO SECTION ─── */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-28 text-center md:pt-28 lg:pt-36">
@@ -112,7 +52,7 @@ export default function LandingView({ onLaunchApp }: LandingViewProps) {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-14 sm:mb-20 opacity-0 animate-text-reveal px-2" style={{ animationDelay: "0.35s" }}>
           <button
-            onClick={onLaunchApp}
+            // onClick={onLaunchApp}
             className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-bold bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian shadow-[0_4px_24px_rgba(212,168,83,0.3)] hover:shadow-[0_8px_40px_rgba(212,168,83,0.45)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2"
           >
             Start Planning For Free <FiArrowRight className="w-5 h-5" />
@@ -386,7 +326,7 @@ export default function LandingView({ onLaunchApp }: LandingViewProps) {
                   </div>
                   <div className="flex gap-2 border-t border-obsidian-border pt-2.5 sm:pt-3">
                     <input disabled placeholder="Ask the AI Travel Assistant..." className="flex-1 bg-obsidian-elevated rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs border border-obsidian-border text-obsidian-muted select-none" />
-                    <button onClick={onLaunchApp} className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gold text-obsidian font-bold text-[11px] sm:text-xs rounded-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1 cursor-pointer">
+                    <button className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gold text-obsidian font-bold text-[11px] sm:text-xs rounded-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1 cursor-pointer">
                       Plan <FiChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     </button>
                   </div>
@@ -423,7 +363,7 @@ export default function LandingView({ onLaunchApp }: LandingViewProps) {
                   </div>
                   <div className="border-t border-obsidian-border pt-2.5 sm:pt-3 flex justify-between items-center">
                     <span className="text-[9px] sm:text-[10px] text-obsidian-muted hidden sm:inline">Log hotels, dining, travel fares instantly.</span>
-                    <button onClick={onLaunchApp} className="px-3 sm:px-4 py-1.5 sm:py-2 bg-ember text-white font-bold text-[11px] sm:text-xs rounded-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1 cursor-pointer">
+                    <button className="px-3 sm:px-4 py-1.5 sm:py-2 bg-ember text-white font-bold text-[11px] sm:text-xs rounded-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1 cursor-pointer">
                       Try Splitter <FiChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     </button>
                   </div>
@@ -468,7 +408,7 @@ export default function LandingView({ onLaunchApp }: LandingViewProps) {
                   </div>
                   <div className="border-t border-obsidian-border pt-2.5 sm:pt-3 flex justify-between items-center">
                     <span className="text-[9px] sm:text-[10px] text-obsidian-muted hidden sm:inline">Zero duplicate transfers.</span>
-                    <button onClick={onLaunchApp} className="px-3 sm:px-4 py-1.5 sm:py-2 bg-luxe text-white font-bold text-[11px] sm:text-xs rounded-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1 cursor-pointer">
+                    <button className="px-3 sm:px-4 py-1.5 sm:py-2 bg-luxe text-white font-bold text-[11px] sm:text-xs rounded-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1 cursor-pointer">
                       Settle <FiChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     </button>
                   </div>
@@ -536,7 +476,6 @@ export default function LandingView({ onLaunchApp }: LandingViewProps) {
             Join thousands of travelers planning, scheduling, and splitting expenses flawlessly with Triplit.
           </p>
           <button
-            onClick={onLaunchApp}
             className="px-6 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian shadow-[0_4px_30px_rgba(212,168,83,0.25)] hover:shadow-[0_8px_50px_rgba(212,168,83,0.4)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 cursor-pointer flex items-center gap-2"
           >
             Launch Interactive Portal <FiArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
