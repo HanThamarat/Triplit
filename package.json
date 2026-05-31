@@ -17,6 +17,7 @@
     "@better-auth/infra": "^0.2.10",
     "@react-icons/all-files": "^4.1.0",
     "@reduxjs/toolkit": "^2.12.0",
+    "@vercel/analytics": "^2.0.1",
     "better-auth": "^1.6.11",
     "dotenv": "^17.4.2",
     "google": "link:@next/third-parties/google",

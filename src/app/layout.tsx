@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 const syne = DM_Sans({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default function RootLayout({
       <body className="font-sans min-h-screen bg-[#F8FAFD] text-slate-900 dark:bg-[#0A0A0F] dark:text-stone-100 transition-colors duration-500" cz-shortcut-listen="true">
         {children}
       </body>
+      <Analytics />
     </html>
   );
 }
