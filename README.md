@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌍 Triplit - Your Smart Travel Companion ✈️
 
-## Getting Started
+Triplit is a modern, AI-powered travel planning and expense management application. Designed for travelers who want to organize their adventures seamlessly, Triplit combines itinerary generation, expense tracking, and social collaboration in one sleek interface.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Features
+
+- **🤖 AI Travel Assistant**: A sophisticated chat interface that simulates intelligent itinerary generation (ready for LLM integration). It provides day-by-day sightseeing programs and dining suggestions.
+- **📅 Trip Management**: Create and manage multiple trips with specific destinations and dates.
+- **💸 Expense Tracking**: Log expenses for each trip and categorize them (Food, Transport, Fun) to keep track of your budget.
+- **🔄 Sync & Export**: Seamlessly sync AI-generated itineraries to your trip schedule and convert them into trackable expenses.
+- **🌓 Dark Mode**: A beautiful, premium UI with full dark mode support using a custom color palette (Obsidian, Pearl, Gold).
+- **🔐 Secure Authentication**: Fast and secure social login powered by Google and Better Auth.
+
+---
+
+## 🚀 Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [TypeORM](https://typeorm.io/)
+- **Authentication**: [Better Auth](https://better-auth.com/)
+- **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/)
+- **Icons**: [React Icons](https://react-icons.github.io/react-icons/)
+
+---
+
+## 📂 Project Structure
+
+```text
+src/
+├── app/             # Next.js App Router (Pages, Layouts, APIs)
+├── components/      # Reusable UI components
+├── entities/        # TypeORM Database Entities
+├── lib/             # Core libraries (Auth, DB connection)
+├── store/           # Redux state management
+├── hooks/           # Custom React hooks
+└── migrations/      # Database migrations
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🤝 Contributing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📄 License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This project is licensed under the MIT License.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Made with ❤️ by [HanThamarat](https://github.com/HanThamarat)
