@@ -1,5 +1,7 @@
 # 🌍 Triplit - Your Smart Travel Companion ✈️
 
+![App Hero Section](public/web.png)
+
 Triplit is a modern, AI-powered travel planning and expense management application. Designed for travelers who want to organize their adventures seamlessly, Triplit combines itinerary generation, expense tracking, and social collaboration in one sleek interface.
 
 ---
