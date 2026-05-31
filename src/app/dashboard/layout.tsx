@@ -13,9 +13,13 @@ export default async function DashboardLayout({
     headers: await headers(),
   });
 
+  if (!session) {
+    redirect("/authentication");
+  }
+
   return (
     <DashboardProvider>
-      <DashboardLayoutClient user={session!.user}>
+      <DashboardLayoutClient user={session.user}>
         {children}
       </DashboardLayoutClient>
     </DashboardProvider>

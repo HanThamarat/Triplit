@@ -6,8 +6,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { FiBriefcase, FiCpu, FiDollarSign, FiLogOut, FiMenu, FiX } from "react-icons/fi";
 import { useDashboard } from "./DashboardContext";
 import ThemeToggle from "../../components/ThemeToggle";
+import LanguageToggle from "../../components/LanguageToggle";
 import Logo from "../../components/Logo";
 import { authClient } from "@/lib/auth-client";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 interface DashboardLayoutClientProps {
   user: {
@@ -29,6 +31,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
 
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useLanguage();
 
   if (!activeTrip) {
     return (
@@ -61,6 +64,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
             </span>
           </Link>
           <div className="flex items-center gap-2">
+            <LanguageToggle />
             <ThemeToggle />
             {/* Close button on mobile */}
             <button
@@ -75,7 +79,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
         {/* Trip Selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">
-            Active Trip
+            {t("dashboard.activeTrip")}
           </label>
           <select
             value={selectedTripId}
@@ -93,9 +97,9 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
         {/* Tab Navigation */}
         <nav className="flex flex-col gap-1.5 mt-1">
           {[
-            { path: "/dashboard", icon: FiBriefcase, label: "Trips Planner" },
-            { path: "/dashboard/ai", icon: FiCpu, label: "AI Chat" },
-            { path: "/dashboard/expenses", icon: FiDollarSign, label: "Shared Bills" },
+            { path: "/dashboard", icon: FiBriefcase, label: t("dashboard.tabTrips") },
+            { path: "/dashboard/ai", icon: FiCpu, label: t("dashboard.tabAi") },
+            { path: "/dashboard/expenses", icon: FiDollarSign, label: t("dashboard.tabBills") },
           ].map(({ path, icon: Icon, label }) => {
             const isActive = pathname === path;
             return (
@@ -131,7 +135,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
           onClick={signOut}
           className="w-full py-2 px-3 rounded-lg border border-pearl-border dark:border-obsidian-border hover:bg-rose-accent/10 hover:border-rose-accent/30 text-pearl-muted hover:text-rose-accent dark:hover:text-rose-accent transition-all text-[11px] font-semibold flex items-center justify-center gap-2 cursor-pointer"
         >
-          <FiLogOut className="w-3.5 h-3.5" /> Log Out
+          <FiLogOut className="w-3.5 h-3.5" /> {t("dashboard.logOut")}
         </button>
       </div>
     </>
@@ -148,6 +152,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
           </span>
         </div>
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           <ThemeToggle />
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -183,26 +188,26 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 sm:mb-6 pb-3 sm:pb-4 border-b border-pearl-border dark:border-obsidian-border gap-3">
           <div>
             <div className="flex items-center gap-1.5 text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-widest">
-              <span>Workspace</span> /{" "}
+              <span>{t("dashboard.workspace")}</span> /{" "}
               <span className="text-blue-primary dark:text-gold font-extrabold">{activeTrip.name}</span>
             </div>
             <h1 className="font-display font-black text-xl sm:text-2xl text-slate-900 dark:text-stone-50 mt-1">
-              {pathname === "/dashboard" && "Trips Planner Hub"}
-              {pathname === "/dashboard/ai" && "AI Travel Assistant"}
-              {pathname === "/dashboard/expenses" && "Shared Expense Ledger"}
+              {pathname === "/dashboard" && t("dashboard.titleTrips")}
+              {pathname === "/dashboard/ai" && t("dashboard.titleAi")}
+              {pathname === "/dashboard/expenses" && t("dashboard.titleExpenses")}
             </h1>
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="text-right">
               <span className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">
-                Total Cost
+                {t("dashboard.totalCost")}
               </span>
               <h3 className="font-black text-sm text-ember">${totalBudget.toFixed(2)}</h3>
             </div>
             <div className="h-8 w-[1px] bg-pearl-border dark:bg-obsidian-border" />
             <div className="text-right">
               <span className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">
-                Friends
+                {t("dashboard.friends")}
               </span>
               <h3 className="font-black text-sm text-slate-800 dark:text-stone-100">{activeTrip.friends.length}</h3>
             </div>

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { FiCpu, FiSend, FiPlus, FiArrowRight, FiCheckCircle, FiDollarSign } from "react-icons/fi";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 interface TripActivity {
   id: string;
@@ -29,19 +30,18 @@ interface AIChatViewProps {
   onImportExpenses: (expenses: { description: string; amount: number; category: string }[]) => void;
 }
 
+// Suggestion display text is translated at render; the query stays in English
+// because generateItineraryResponse() matches on English keywords.
 const INITIAL_SUGGESTIONS = [
-  { text: "🗼 Tokyo 3-Day Food Tour", query: "Plan a 3-day Tokyo culinary tour" },
-  { text: "🥐 Paris Romance Weekend", query: "Give me a weekend itinerary for Paris" },
-  { text: "🌴 Miami Beach Sun & Fun", query: "Recommend 2 days in Miami Beach" },
+  { key: "ai.sug1", query: "Plan a 3-day Tokyo culinary tour" },
+  { key: "ai.sug2", query: "Give me a weekend itinerary for Paris" },
+  { key: "ai.sug3", query: "Recommend 2 days in Miami Beach" },
 ];
 
 export default function AIChatView({ activeTripName, onImportActivities, onImportExpenses }: AIChatViewProps) {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "init",
-      sender: "ai",
-      text: `Hello! I'm your Triplit Travel AI Assistant. Let's design the ultimate schedule for **${activeTripName}**! You can ask me to draft day-by-day plans, suggest restaurants, or estimate budget breakdowns.`,
-    },
+    { id: "init", sender: "ai", text: "" },
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -147,22 +147,22 @@ export default function AIChatView({ activeTripName, onImportActivities, onImpor
           </div>
           <div>
             <h3 className="font-display font-bold text-xs sm:text-sm text-slate-800 dark:text-stone-50 flex items-center gap-1.5">
-              Triplit AI Assistant
+              {t("ai.assistant")}
             </h3>
             <span className="text-[9px] sm:text-[10px] font-medium text-emerald-accent flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-accent" /> Online
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-accent" /> {t("ai.online")}
             </span>
           </div>
         </div>
         <div className="text-[9px] sm:text-[10px] px-2 sm:px-2.5 py-1 rounded-full border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-elevated text-pearl-muted dark:text-obsidian-muted font-medium hidden sm:block">
-          Context: <b className="text-slate-800 dark:text-stone-200 font-semibold">{activeTripName}</b>
+          {t("ai.context")} <b className="text-slate-800 dark:text-stone-200 font-semibold">{activeTripName}</b>
         </div>
       </div>
 
       {/* Suggestions */}
       {messages.length === 1 && (
         <div className="px-4 sm:px-5 py-3 sm:py-4 bg-pearl-surface/30 dark:bg-obsidian/10 border-b border-pearl-border/50 dark:border-obsidian-border/50">
-          <p className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider mb-2">Suggested Prompts</p>
+          <p className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider mb-2">{t("ai.suggestedPrompts")}</p>
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {INITIAL_SUGGESTIONS.map((sug, idx) => (
               <button
@@ -170,7 +170,7 @@ export default function AIChatView({ activeTripName, onImportActivities, onImpor
                 onClick={() => handleSendMessage(sug.query)}
                 className="text-[10px] sm:text-[11px] font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-elevated text-slate-600 dark:text-stone-300 hover:border-blue-primary dark:hover:border-gold hover:bg-blue-subtle/50 dark:hover:bg-gold/[0.04] transition-all duration-200 cursor-pointer flex items-center gap-1"
               >
-                {sug.text} <FiArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-pearl-muted" />
+                {t(sug.key)} <FiArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-pearl-muted" />
               </button>
             ))}
           </div>
@@ -193,7 +193,7 @@ export default function AIChatView({ activeTripName, onImportActivities, onImpor
                   : "bg-pearl-surface dark:bg-obsidian text-slate-700 dark:text-stone-200 border-pearl-border dark:border-obsidian-border rounded-bl-none"
               }`}
             >
-              {msg.text}
+              {msg.id === "init" ? t("ai.greeting", { name: activeTripName }) : msg.text}
             </div>
 
             {msg.sender === "ai" && msg.itinerary && (
@@ -201,7 +201,7 @@ export default function AIChatView({ activeTripName, onImportActivities, onImpor
                 <div className="flex items-center justify-between border-b border-pearl-border/50 dark:border-obsidian-border/50 pb-3">
                   <h4 className="font-display font-extrabold text-xs sm:text-sm text-slate-900 dark:text-stone-50">{msg.itinerary.title}</h4>
                   <span className="text-[8px] sm:text-[9px] font-bold text-blue-primary dark:text-gold bg-blue-subtle dark:bg-gold/10 border border-blue-primary/15 dark:border-gold/15 px-1.5 sm:px-2 py-0.5 rounded uppercase tracking-wider">
-                    {msg.itinerary.activities.length} Stops
+                    {t("ai.stops", { n: msg.itinerary.activities.length })}
                   </span>
                 </div>
 
@@ -217,8 +217,8 @@ export default function AIChatView({ activeTripName, onImportActivities, onImpor
                           : "bg-luxe border-luxe-dark"
                       }`} />
                       <div className="flex items-baseline justify-between gap-2">
-                        <span className="text-[9px] sm:text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted tracking-wider">Day {act.day} • {act.time}</span>
-                        <span className="text-[9px] sm:text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted">Est. ${act.costEstimate}</span>
+                        <span className="text-[9px] sm:text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted tracking-wider">{t("ai.day")} {act.day} • {act.time}</span>
+                        <span className="text-[9px] sm:text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted">{t("ai.est")} ${act.costEstimate}</span>
                       </div>
                       <h5 className="font-bold text-slate-800 dark:text-stone-200 mt-0.5">{act.title}</h5>
                       <p className="text-[9px] sm:text-[10px] text-pearl-muted dark:text-obsidian-muted mt-0.5 leading-normal">{act.description}</p>
@@ -237,7 +237,7 @@ export default function AIChatView({ activeTripName, onImportActivities, onImpor
                         : "bg-blue-primary dark:bg-gold text-white dark:text-obsidian hover:opacity-90 active:scale-95"
                     }`}
                   >
-                    {appliedItineraryId === msg.id ? <><FiCheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Added!</> : <><FiPlus className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Sync Schedule</>}
+                    {appliedItineraryId === msg.id ? <><FiCheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {t("ai.added")}</> : <><FiPlus className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {t("ai.syncSchedule")}</>}
                   </button>
                   <button
                     onClick={() => importExpenses(msg.id, msg.itinerary!.activities)}
@@ -248,7 +248,7 @@ export default function AIChatView({ activeTripName, onImportActivities, onImpor
                         : "border-pearl-border dark:border-obsidian-border bg-pearl-surface dark:bg-obsidian-card hover:bg-pearl-card dark:hover:bg-obsidian-elevated text-slate-700 dark:text-stone-200 active:scale-95"
                     }`}
                   >
-                    {appliedExpensesId === msg.id ? <><FiCheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Done!</> : <><FiDollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Split Fares</>}
+                    {appliedExpensesId === msg.id ? <><FiCheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {t("ai.done")}</> : <><FiDollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {t("ai.splitFares")}</>}
                   </button>
                 </div>
               </div>
@@ -274,7 +274,7 @@ export default function AIChatView({ activeTripName, onImportActivities, onImpor
         <input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Ask AI to plan your trip..."
+          placeholder={t("ai.inputPlaceholder")}
           className="flex-1 bg-pearl-card dark:bg-obsidian-surface text-slate-800 dark:text-stone-100 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-xs border border-pearl-border dark:border-obsidian-border focus:border-blue-primary dark:focus:border-gold focus:outline-none transition-all"
         />
         <button
