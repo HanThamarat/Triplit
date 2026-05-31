@@ -1,10 +1,16 @@
 import { FiArrowRight, FiMenu, FiX } from "react-icons/fi";
 import Logo from "../components/Logo";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import OutlineButtonComponent from "@/app/components/content-button/outlile-btn";
 
 export default function Nav() {
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const router = useRouter();
+
+    const redirectToAuth = () => router.push("/authentication");
 
     return(
       <nav className="sticky top-0 z-50 w-full px-4 sm:px-6 py-3.5 glass-panel">
@@ -24,16 +30,13 @@ export default function Nav() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* <ThemeToggle /> */}
-            <button
-            //   onClick={onLaunchApp}
-              className="hidden sm:flex relative overflow-hidden group px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-gold to-gold-dark text-obsidian shadow-lg shadow-gold/20 hover:shadow-gold/40 hover:scale-[1.03] active:scale-95 transition-all duration-300 cursor-pointer"
-            >
-              <span className="relative z-10 flex items-center gap-1.5">
-                Launch App <FiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </button>
-
+            <div className="hidden md:block">
+              <OutlineButtonComponent
+                label="Sign In"
+                onClick={redirectToAuth}
+              />
+            </div>
+      
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -51,12 +54,13 @@ export default function Nav() {
             <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-gold transition-colors px-2 py-1.5">Features</a>
             <a href="#peek" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-gold transition-colors px-2 py-1.5">Live Preview</a>
             <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-gold transition-colors px-2 py-1.5">Testimonials</a>
-            <button
-              onClick={() => { setMobileMenuOpen(false) }}
-              className="sm:hidden w-full px-5 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-gold to-gold-dark text-obsidian shadow-lg shadow-gold/20 cursor-pointer flex items-center justify-center gap-1.5 mt-1"
-            >
-              Launch App <FiArrowRight className="w-4 h-4" />
-            </button>
+            <OutlineButtonComponent
+              label="Sign In"
+              onClick={() => {
+                redirectToAuth();
+                setMobileMenuOpen(false);
+              }}
+            />
           </div>
         )}
       </nav>

@@ -15,7 +15,7 @@ export default async function DashboardLayout({
 
   return (
     <DashboardProvider>
-      <DashboardLayoutClient user={session.user}>
+      <DashboardLayoutClient user={session!.user}>
         {children}
       </DashboardLayoutClient>
     </DashboardProvider>

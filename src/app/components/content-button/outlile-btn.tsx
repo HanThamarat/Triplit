@@ -22,7 +22,7 @@ export default function OutlineButtonComponent({
     return(
         <button
             type={ type && "button" }
-            className={`cursor-pointer w-full gap-2 py-[10px] rounded-[8px] px-[16px] justify-center flex items-center ${ color ? color : 'border-white' } border disabled:bg-gray-300`}
+            className={`cursor-pointer w-full gap-2 py-[10px] rounded-[8px] px-[25px] justify-center flex items-center ${ color ? `border-[${color}]` : 'border-white' } border disabled:bg-gray-300`}
             disabled={isLoading}
             onClick={onClick}
         >
@@ -31,7 +31,7 @@ export default function OutlineButtonComponent({
                 <span className="animate-spin inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full mr-2" />
             ) }
             {icons}
-            <p className={` ${ textColor ? textColor : "text-white" } `}>{label}</p>
+            <p className={` ${ textColor ? `text-[${textColor}]` : "text-white" } `}>{label}</p>
         </button>
     );
 }
