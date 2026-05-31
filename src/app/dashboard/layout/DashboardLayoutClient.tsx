@@ -42,11 +42,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
   const totalBudget = activeTrip.expenses.reduce((acc, ex) => acc + ex.amount, 0);
 
   const signOut = async () => {
-    const data = await authClient.signOut({
-      fetchOptions: () => {
-        router.push("/authentication");
-      }
-    });
+    const data = await authClient.signOut({});
 
     if (data.data?.success) {
       router.push("/authentication");

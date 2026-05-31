@@ -12,18 +12,27 @@ import {
   FiShield,
   FiGlobe,
 } from "react-icons/fi";
-import Logo from "./Logo";
+import Logo from "../components/Logo";
 import Nav from "../content-landing/Nav";
+import { useRouter } from "next/navigation";
 
 export default function LandingView() {
   const [activePeekTab, setActivePeekTab] = useState<"ai" | "split" | "minim">("ai");
 
+  const router = useRouter();
+
+  const redirectToAuth = () => router.push("/authentication");
+
   return (
-    <div className="relative min-h-screen overflow-x-hidden aurora-mesh noise-overlay">
+    <div className="relative min-h-screen overflow-x-hidden bg-pearl dark:bg-obsidian aurora-mesh animate-aurora noise-overlay">
+      {/* Background Decorations */}
+      <div className="fixed inset-0 grid-overlay opacity-30 pointer-events-none" />
+      <div className="fixed inset-0 dot-grid opacity-20 pointer-events-none" />
+      
       {/* Ambient Light Orbs */}
-      <div className="fixed top-[-15%] left-[-8%] w-[45%] h-[45%] bg-gold/[0.04] rounded-full blur-[140px] pointer-events-none animate-aurora" />
-      <div className="fixed bottom-[10%] right-[-12%] w-[50%] h-[50%] bg-ember/[0.03] rounded-full blur-[160px] pointer-events-none" />
-      <div className="fixed top-[40%] left-[50%] w-[35%] h-[35%] bg-luxe/[0.02] rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed top-[-15%] left-[-8%] w-[45%] h-[45%] bg-gold/10 rounded-full blur-[140px] pointer-events-none animate-float-slow" />
+      <div className="fixed bottom-[10%] right-[-12%] w-[50%] h-[50%] bg-blue-primary/10 rounded-full blur-[160px] pointer-events-none animate-float" />
+      <div className="fixed top-[40%] left-[50%] w-[35%] h-[35%] bg-luxe/5 rounded-full blur-[120px] pointer-events-none animate-float-delayed" />
 
       <Nav />     
 
@@ -31,43 +40,44 @@ export default function LandingView() {
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-28 text-center md:pt-28 lg:pt-36">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-gold/20 bg-gold/[0.04] text-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase mb-6 sm:mb-8 animate-text-reveal">
-          <span className="flex h-1.5 w-1.5 rounded-full bg-gold animate-bounce-subtle" />
+          <span className="flex h-1.5 w-1.5 rounded-full bg-gold animate-pulse-gold" />
           Introducing Triplit AI v2.0
         </div>
 
         {/* Main Heading */}
         <h1 className="font-display font-black text-4xl sm:text-5xl md:text-6xl lg:text-8xl tracking-[-0.03em] leading-[0.95] max-w-5xl mx-auto mb-5 sm:mb-7 text-stone-900 dark:text-stone-50 animate-text-reveal" style={{ animationDelay: "0.1s" }}>
           Travel Smarter.
-          <span className="block mt-2 sm:mt-3 text-gradient-hero">
+          <span className="block mt-2 sm:mt-3 text-gradient-hero animate-text-reveal" style={{ animationDelay: "0.2s" }}>
             Plan Together. Split Easy.
           </span>
         </h1>
 
         {/* Subheading */}
-        <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl text-stone-500 dark:text-obsidian-muted mb-8 sm:mb-12 leading-relaxed font-sans opacity-0 animate-text-reveal px-2" style={{ animationDelay: "0.25s" }}>
+        <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl text-stone-500 dark:text-obsidian-muted mb-8 sm:mb-12 leading-relaxed font-sans animate-text-reveal" style={{ animationDelay: "0.3s" }}>
           The collaborative travel portal powered by AI. Design custom itineraries in seconds,
           coordinate with shared boards, and settle group expenses optimally — zero headache.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-14 sm:mb-20 opacity-0 animate-text-reveal px-2" style={{ animationDelay: "0.35s" }}>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-14 sm:mb-20 animate-text-reveal" style={{ animationDelay: "0.4s" }}>
           <button
-            // onClick={onLaunchApp}
+            onClick={redirectToAuth}
             className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-bold bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian shadow-[0_4px_24px_rgba(212,168,83,0.3)] hover:shadow-[0_8px_40px_rgba(212,168,83,0.45)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2"
           >
             Start Planning For Free <FiArrowRight className="w-5 h-5" />
           </button>
           <a
             href="#peek"
-            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-semibold border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-card hover:bg-pearl-surface dark:hover:bg-obsidian-elevated text-stone-700 dark:text-stone-300 transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-semibold border border-pearl-border dark:border-obsidian-border bg-pearl-card/50 dark:bg-obsidian-card/50 backdrop-blur-md hover:bg-pearl-surface dark:hover:bg-obsidian-elevated text-stone-700 dark:text-stone-300 transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
           >
             Interactive Sandbox
           </a>
         </div>
 
         {/* ─── Dashboard Preview ─── */}
-        <div className="relative max-w-5xl mx-auto rounded-2xl p-1 sm:p-1.5 glass-gold shadow-2xl shadow-gold/[0.06] opacity-0 animate-card-enter delay-4">
-          <div className="rounded-xl overflow-hidden border border-pearl-border/40 dark:border-obsidian-border/50 bg-pearl-surface/60 dark:bg-obsidian/70 aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] flex flex-col items-stretch">
+        <div className="relative max-w-5xl mx-auto rounded-2xl p-1 sm:p-1.5 glass-gold shadow-2xl shadow-gold/[0.06] animate-card-enter animate-float-slow" style={{ animationDelay: "0.6s" }}>
+          <div className="absolute -inset-4 bg-gold/5 blur-2xl rounded-[3rem] pointer-events-none animate-pulse-gold opacity-50" />
+          <div className="relative rounded-xl overflow-hidden border border-pearl-border/40 dark:border-obsidian-border/50 bg-pearl-surface/60 dark:bg-obsidian/70 aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] flex flex-col items-stretch">
             {/* Window Bar */}
             <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 bg-pearl-surface/80 dark:bg-obsidian-surface border-b border-pearl-border/60 dark:border-obsidian-border/80">
               <div className="flex items-center gap-1.5">
