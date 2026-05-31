@@ -15,9 +15,12 @@ import {
 import Logo from "../components/Logo";
 import Nav from "../content-landing/Nav";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function LandingView() {
   const [activePeekTab, setActivePeekTab] = useState<"ai" | "split" | "minim">("ai");
+
+  const { t } = useLanguage();
 
   const router = useRouter();
 
@@ -41,21 +44,20 @@ export default function LandingView() {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-gold/20 bg-gold/[0.04] text-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase mb-6 sm:mb-8 animate-text-reveal">
           <span className="flex h-1.5 w-1.5 rounded-full bg-gold animate-pulse-gold" />
-          Introducing Triplit AI v2.0
+          {t("landing.badge")}
         </div>
 
         {/* Main Heading */}
         <h1 className="font-display font-black text-4xl sm:text-5xl md:text-6xl lg:text-8xl tracking-[-0.03em] leading-[0.95] max-w-5xl mx-auto mb-5 sm:mb-7 text-stone-900 dark:text-stone-50 animate-text-reveal" style={{ animationDelay: "0.1s" }}>
-          Travel Smarter.
+          {t("landing.heroTitle1")}
           <span className="block mt-2 sm:mt-3 text-gradient-hero animate-text-reveal" style={{ animationDelay: "0.2s" }}>
-            Plan Together. Split Easy.
+            {t("landing.heroTitle2")}
           </span>
         </h1>
 
         {/* Subheading */}
         <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl text-stone-500 dark:text-obsidian-muted mb-8 sm:mb-12 leading-relaxed font-sans animate-text-reveal" style={{ animationDelay: "0.3s" }}>
-          The collaborative travel portal powered by AI. Design custom itineraries in seconds,
-          coordinate with shared boards, and settle group expenses optimally — zero headache.
+          {t("landing.heroSubtitle")}
         </p>
 
         {/* CTA Buttons */}
@@ -64,13 +66,13 @@ export default function LandingView() {
             onClick={redirectToAuth}
             className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-bold bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian shadow-[0_4px_24px_rgba(212,168,83,0.3)] hover:shadow-[0_8px_40px_rgba(212,168,83,0.45)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2"
           >
-            Start Planning For Free <FiArrowRight className="w-5 h-5" />
+            {t("landing.ctaStartFree")} <FiArrowRight className="w-5 h-5" />
           </button>
           <a
             href="#peek"
             className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-semibold border border-pearl-border dark:border-obsidian-border bg-pearl-card/50 dark:bg-obsidian-card/50 backdrop-blur-md hover:bg-pearl-surface dark:hover:bg-obsidian-elevated text-stone-700 dark:text-stone-300 transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
           >
-            Interactive Sandbox
+            {t("landing.ctaSandbox")}
           </a>
         </div>
 
@@ -164,12 +166,12 @@ export default function LandingView() {
       <section id="features" className="py-16 sm:py-24 lg:py-28 border-t border-pearl-border/50 dark:border-obsidian-border/40 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gold uppercase mb-3 block">Core Capabilities</span>
+            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gold uppercase mb-3 block">{t("landing.features.eyebrow")}</span>
             <h2 className="font-display font-black text-2xl sm:text-3xl md:text-5xl tracking-tight text-stone-900 dark:text-stone-50 mb-4 sm:mb-5">
-              Engineered for Frictionless Group Travel
+              {t("landing.features.title")}
             </h2>
             <p className="text-stone-500 dark:text-obsidian-muted font-sans text-xs sm:text-sm md:text-base leading-relaxed px-2">
-              Every detail optimized to remove planning friction, prevent budget arguments, and curate the perfect itinerary.
+              {t("landing.features.subtitle")}
             </p>
           </div>
 
@@ -181,9 +183,9 @@ export default function LandingView() {
               <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold border border-gold/15 mb-5 sm:mb-6 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold/10 transition-all duration-300">
                 <FiCpu className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <h3 className="font-display font-bold text-lg sm:text-xl text-stone-900 dark:text-stone-50 mb-2 sm:mb-3">AI Trip Planner</h3>
+              <h3 className="font-display font-bold text-lg sm:text-xl text-stone-900 dark:text-stone-50 mb-2 sm:mb-3">{t("landing.features.aiTitle")}</h3>
               <p className="text-stone-500 dark:text-obsidian-muted text-xs sm:text-sm leading-relaxed font-sans max-w-lg">
-                Tell Triplit where you&apos;re headed and who is going. Our localized chatbot instantly structures day-by-day itineraries, complete with dining suggestions, route logistics, and real-time cost estimates.
+                {t("landing.features.aiDesc")}
               </p>
             </div>
 
@@ -193,9 +195,9 @@ export default function LandingView() {
               <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-ember/10 flex items-center justify-center text-ember border border-ember/15 mb-5 sm:mb-6 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-ember/10 transition-all duration-300">
                 <FiDollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <h3 className="font-display font-bold text-lg sm:text-xl text-stone-900 dark:text-stone-50 mb-2 sm:mb-3">Smart Splitter</h3>
+              <h3 className="font-display font-bold text-lg sm:text-xl text-stone-900 dark:text-stone-50 mb-2 sm:mb-3">{t("landing.features.splitTitle")}</h3>
               <p className="text-stone-500 dark:text-obsidian-muted text-xs sm:text-sm leading-relaxed font-sans">
-                Divide expenses equally, unequally, or by shares. Category tags keep budgets clean.
+                {t("landing.features.splitDesc")}
               </p>
             </div>
 
@@ -205,9 +207,9 @@ export default function LandingView() {
               <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-luxe/10 flex items-center justify-center text-luxe border border-luxe/15 mb-5 sm:mb-6 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-luxe/10 transition-all duration-300">
                 <FiUsers className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <h3 className="font-display font-bold text-lg sm:text-xl text-stone-900 dark:text-stone-50 mb-2 sm:mb-3">Debt Settlement</h3>
+              <h3 className="font-display font-bold text-lg sm:text-xl text-stone-900 dark:text-stone-50 mb-2 sm:mb-3">{t("landing.features.debtTitle")}</h3>
               <p className="text-stone-500 dark:text-obsidian-muted text-xs sm:text-sm leading-relaxed font-sans">
-                Optimal transaction engine calculates minimum transfers to balance all outstanding debts.
+                {t("landing.features.debtDesc")}
               </p>
             </div>
 
@@ -218,22 +220,22 @@ export default function LandingView() {
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-arctic/10 flex items-center justify-center text-arctic border border-arctic/15">
                     <FiGlobe className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <h4 className="font-display font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-50">Worldwide Coverage</h4>
-                  <p className="text-stone-500 dark:text-obsidian-muted text-[11px] sm:text-xs leading-relaxed font-sans">AI trained on 500+ global destinations with local dining data.</p>
+                  <h4 className="font-display font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-50">{t("landing.features.worldwideTitle")}</h4>
+                  <p className="text-stone-500 dark:text-obsidian-muted text-[11px] sm:text-xs leading-relaxed font-sans">{t("landing.features.worldwideDesc")}</p>
                 </div>
                 <div className="flex flex-col gap-2.5 sm:gap-3">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gold/10 flex items-center justify-center text-gold border border-gold/15">
                     <FiZap className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <h4 className="font-display font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-50">Instant Sync</h4>
-                  <p className="text-stone-500 dark:text-obsidian-muted text-[11px] sm:text-xs leading-relaxed font-sans">AI-generated plans sync directly to your schedule and expense ledger.</p>
+                  <h4 className="font-display font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-50">{t("landing.features.syncTitle")}</h4>
+                  <p className="text-stone-500 dark:text-obsidian-muted text-[11px] sm:text-xs leading-relaxed font-sans">{t("landing.features.syncDesc")}</p>
                 </div>
                 <div className="flex flex-col gap-2.5 sm:gap-3">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-emerald-accent/10 flex items-center justify-center text-emerald-accent border border-emerald-accent/15">
                     <FiShield className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <h4 className="font-display font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-50">Offline Ready</h4>
-                  <p className="text-stone-500 dark:text-obsidian-muted text-[11px] sm:text-xs leading-relaxed font-sans">LocalStorage persistence keeps your data available without a connection.</p>
+                  <h4 className="font-display font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-50">{t("landing.features.offlineTitle")}</h4>
+                  <p className="text-stone-500 dark:text-obsidian-muted text-[11px] sm:text-xs leading-relaxed font-sans">{t("landing.features.offlineDesc")}</p>
                 </div>
               </div>
             </div>
@@ -245,12 +247,12 @@ export default function LandingView() {
       <section id="peek" className="py-16 sm:py-24 lg:py-28 max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-14 items-center">
           <div className="lg:col-span-5 text-left">
-            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gold uppercase mb-3 sm:mb-4 block">Sandbox Experiment</span>
+            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gold uppercase mb-3 sm:mb-4 block">{t("landing.sandbox.eyebrow")}</span>
             <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-tight text-stone-900 dark:text-stone-50 mb-4 sm:mb-6 leading-[1.05]">
-              Experience the core features right now
+              {t("landing.sandbox.title")}
             </h2>
             <p className="text-stone-500 dark:text-obsidian-muted text-xs sm:text-sm font-sans mb-6 sm:mb-10 leading-relaxed">
-              No signup required. Click through the sandbox tabs to preview how simple it is to plan trips, split bills, and get personalized AI recommendations.
+              {t("landing.sandbox.subtitle")}
             </p>
 
             <div className="flex flex-col gap-2.5 sm:gap-3 font-sans">
@@ -264,8 +266,8 @@ export default function LandingView() {
               >
                 <FiCpu className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0 ${activePeekTab === "ai" ? "text-gold" : ""}`} />
                 <div>
-                  <h4 className="font-bold text-xs sm:text-sm">Interactive AI Assistant</h4>
-                  <p className="text-[10px] sm:text-xs text-stone-400 dark:text-obsidian-muted mt-0.5 sm:mt-1 leading-relaxed">Conversational curation with formatted calendar events.</p>
+                  <h4 className="font-bold text-xs sm:text-sm">{t("landing.sandbox.aiTitle")}</h4>
+                  <p className="text-[10px] sm:text-xs text-stone-400 dark:text-obsidian-muted mt-0.5 sm:mt-1 leading-relaxed">{t("landing.sandbox.aiDesc")}</p>
                 </div>
               </button>
               <button
@@ -278,8 +280,8 @@ export default function LandingView() {
               >
                 <FiDollarSign className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0 ${activePeekTab === "split" ? "text-ember" : ""}`} />
                 <div>
-                  <h4 className="font-bold text-xs sm:text-sm">Detailed Expense Splitter</h4>
-                  <p className="text-[10px] sm:text-xs text-stone-400 dark:text-obsidian-muted mt-0.5 sm:mt-1 leading-relaxed">Divide custom hotel, flight, or activity ledgers instantly.</p>
+                  <h4 className="font-bold text-xs sm:text-sm">{t("landing.sandbox.splitTitle")}</h4>
+                  <p className="text-[10px] sm:text-xs text-stone-400 dark:text-obsidian-muted mt-0.5 sm:mt-1 leading-relaxed">{t("landing.sandbox.splitDesc")}</p>
                 </div>
               </button>
               <button
@@ -292,8 +294,8 @@ export default function LandingView() {
               >
                 <FiUsers className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0 ${activePeekTab === "minim" ? "text-luxe" : ""}`} />
                 <div>
-                  <h4 className="font-bold text-xs sm:text-sm">Debt Minimization Settlement</h4>
-                  <p className="text-[10px] sm:text-xs text-stone-400 dark:text-obsidian-muted mt-0.5 sm:mt-1 leading-relaxed">Simplifies split debts so your group makes the fewest transactions.</p>
+                  <h4 className="font-bold text-xs sm:text-sm">{t("landing.sandbox.minimTitle")}</h4>
+                  <p className="text-[10px] sm:text-xs text-stone-400 dark:text-obsidian-muted mt-0.5 sm:mt-1 leading-relaxed">{t("landing.sandbox.minimDesc")}</p>
                 </div>
               </button>
             </div>
@@ -433,17 +435,17 @@ export default function LandingView() {
       <section id="testimonials" className="py-16 sm:py-24 lg:py-28 border-t border-pearl-border/50 dark:border-obsidian-border/40 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
-            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gold uppercase mb-3 block">User Reviews</span>
+            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gold uppercase mb-3 block">{t("landing.testimonials.eyebrow")}</span>
             <h2 className="font-display font-black text-2xl sm:text-3xl md:text-5xl tracking-tight text-stone-900 dark:text-stone-50">
-              Approved by Global Explorers
+              {t("landing.testimonials.title")}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {[
-              { quote: "Our trip to Tokyo was a breeze. We split expenses between 6 friends, and the settlement graph showed us exactly how to pay. The AI planner booked all our dining slots flawlessly!", name: "Han M.", detail: "Traveled to Tokyo • 6 Friends", initials: "HM", gradient: "from-gold to-gold-dark text-obsidian" },
-              { quote: "Honestly, I hated split bills before Triplit. Settle up math used to take us hours on spreadsheets. Triplit does it immediately, and the design is just gorgeous to look at!", name: "Sophia L.", detail: "Euro Summer Tour • 4 Friends", initials: "SL", gradient: "from-ember to-ember-dark text-white" },
-              { quote: "I was skeptical about AI planning but Triplit's assistant is incredibly responsive. I literally asked for an art-deco itinerary in Miami and it mapped out a flawless day-by-day roadmap!", name: "Julian D.", detail: "Miami Beach Plan • 3 Friends", initials: "JD", gradient: "from-luxe to-luxe-dark text-white" },
+              { quote: t("landing.testimonials.quote1"), name: "Han M.", detail: t("landing.testimonials.detail1"), initials: "HM", gradient: "from-gold to-gold-dark text-obsidian" },
+              { quote: t("landing.testimonials.quote2"), name: "Sophia L.", detail: t("landing.testimonials.detail2"), initials: "SL", gradient: "from-ember to-ember-dark text-white" },
+              { quote: t("landing.testimonials.quote3"), name: "Julian D.", detail: t("landing.testimonials.detail3"), initials: "JD", gradient: "from-luxe to-luxe-dark text-white" },
             ].map((review, idx) => (
               <div
                 key={idx}
@@ -480,15 +482,16 @@ export default function LandingView() {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
           </div>
           <h2 className="font-display font-black text-2xl sm:text-3xl md:text-5xl text-stone-900 dark:text-stone-50 mb-4 sm:mb-5 tracking-tight">
-            Ready to design your next dream vacation?
+            {t("landing.cta.title")}
           </h2>
           <p className="text-stone-500 dark:text-obsidian-muted text-xs sm:text-sm md:text-base font-sans max-w-2xl mb-6 sm:mb-10 leading-relaxed px-2">
-            Join thousands of travelers planning, scheduling, and splitting expenses flawlessly with Triplit.
+            {t("landing.cta.subtitle")}
           </p>
           <button
+            onClick={redirectToAuth}
             className="px-6 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian shadow-[0_4px_30px_rgba(212,168,83,0.25)] hover:shadow-[0_8px_50px_rgba(212,168,83,0.4)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 cursor-pointer flex items-center gap-2"
           >
-            Launch Interactive Portal <FiArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            {t("landing.cta.button")} <FiArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </section>
@@ -503,11 +506,11 @@ export default function LandingView() {
             </span>
           </div>
           <div className="text-center sm:text-left">
-            &copy; {new Date().getFullYear()} Triplit. All rights reserved.
+            &copy; {new Date().getFullYear()} Triplit. {t("landing.footer.rights")}
           </div>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-gold transition-colors duration-200">Privacy</a>
-            <a href="#" className="hover:text-gold transition-colors duration-200">Terms</a>
+            <a href="#" className="hover:text-gold transition-colors duration-200">{t("landing.footer.privacy")}</a>
+            <a href="#" className="hover:text-gold transition-colors duration-200">{t("landing.footer.terms")}</a>
           </div>
         </div>
       </footer>

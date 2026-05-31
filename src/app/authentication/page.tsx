@@ -6,8 +6,12 @@ import OutlineButtonComponent from "@/app/components/content-button/outlile-btn"
 import Divider from "@/app/components/content-line/divider";
 import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
+import LanguageToggle from "@/app/components/LanguageToggle";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function AuthPage() {
+
+    const { t } = useLanguage();
 
     const signinWithGoogle = async () => {
         await authClient.signIn.social({
@@ -27,26 +31,29 @@ export default function AuthPage() {
             <div className="absolute -bottom-[10%] -right-[10%] w-[45%] h-[45%] bg-blue-primary/10 rounded-full blur-[100px] animate-float pointer-events-none" />
 
            <div className="relative z-10 mx-[20px] sm:mx-auto w-[460px] rounded-[24px] px-[24px] py-[32px] bg-white/80 dark:bg-obsidian-card/90 backdrop-blur-xl border-pearl-border dark:border-obsidian-border border shadow-2xl animate-card-enter">
+                <div className="flex justify-end mb-[12px]">
+                    <LanguageToggle />
+                </div>
                 <div className="flex flex-col gap-[8px] mb-[28px]">
-                    <span className="block font-display font-extrabold text-[24px] text-slate-900 dark:text-stone-50 tracking-tight">Welcome Back</span>
-                    <span className="text-[14px] text-pearl-muted dark:text-obsidian-muted font-medium">Log in to your Triplit account to continue your journey</span>
+                    <span className="block font-display font-extrabold text-[24px] text-slate-900 dark:text-stone-50 tracking-tight">{t("auth.welcome")}</span>
+                    <span className="text-[14px] text-pearl-muted dark:text-obsidian-muted font-medium">{t("auth.subtitle")}</span>
                 </div>
                 <div className="flex flex-col gap-[20px]">
                     <Input
-                        label="Email"
-                        placholder="Enter your email"
+                        label={t("auth.email")}
+                        placholder={t("auth.emailPlaceholder")}
                     />
                     <Input
-                        label="Password"
-                        placholder="Enter your password"
+                        label={t("auth.password")}
+                        placholder={t("auth.passwordPlaceholder")}
                         isPassword
                     />
                     <ButtonComponent
-                        label="Sign In"
+                        label={t("auth.signIn")}
                     />
-                    <Divider label="or" />
+                    <Divider label={t("common.or")} />
                     <OutlineButtonComponent
-                        label="Continue with Google"
+                        label={t("auth.continueGoogle")}
                         icons={<FcGoogle className="text-[20px]" />}
                         onClick={signinWithGoogle}
                     />
