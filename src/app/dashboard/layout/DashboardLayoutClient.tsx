@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FiBriefcase, FiCpu, FiDollarSign, FiLogOut, FiMenu, FiX } from "react-icons/fi";
+import { FiBriefcase, FiCpu, FiDollarSign, FiLogOut, FiMenu, FiX, FiChevronDown } from "react-icons/fi";
 import { useDashboard } from "./DashboardContext";
 import ThemeToggle from "../../components/ThemeToggle";
 import LanguageToggle from "../../components/LanguageToggle";
@@ -36,118 +36,135 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
   if (!activeTrip) {
     return (
       <div className="min-h-screen bg-pearl dark:bg-obsidian flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-primary dark:border-gold" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-pearl-border border-t-blue-primary dark:border-obsidian-border dark:border-t-gold" />
       </div>
     );
   }
 
-  // Calculate totals
   const totalBudget = activeTrip.expenses.reduce((acc, ex) => acc + ex.amount, 0);
 
   const signOut = async () => {
     const data = await authClient.signOut({});
-
     if (data.data?.success) {
       router.push("/authentication");
     }
-  }
+  };
+
+  const navItems = [
+    { path: "/dashboard", icon: FiBriefcase, label: t("dashboard.tabTrips") },
+    { path: "/dashboard/ai", icon: FiCpu, label: t("dashboard.tabAi") },
+    { path: "/dashboard/expenses", icon: FiDollarSign, label: t("dashboard.tabBills") },
+  ];
+
+  const pageTitle =
+    pathname === "/dashboard"
+      ? t("dashboard.titleTrips")
+      : pathname === "/dashboard/ai"
+      ? t("dashboard.titleAi")
+      : t("dashboard.titleExpenses");
 
   const sidebarContent = (
     <>
-      {/* Brand */}
-      <div className="flex flex-col gap-5 p-4 sm:p-5">
+      <div className="flex flex-col gap-6 p-5">
+        {/* Brand row */}
         <div className="flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
-            <Logo size={32} />
-            <span className="font-display font-extrabold text-lg tracking-tight text-slate-900 dark:text-stone-100">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-primary dark:focus-visible:ring-gold"
+          >
+            <Logo size={30} />
+            <span className="font-display text-lg font-extrabold tracking-tight text-slate-900 dark:text-stone-100">
               triplit
             </span>
           </Link>
-          <div className="flex items-center gap-2">
-            <LanguageToggle />
-            <ThemeToggle />
-            {/* Close button on mobile */}
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1.5 rounded-lg border border-pearl-border dark:border-obsidian-border text-pearl-muted dark:text-obsidian-muted cursor-pointer"
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="rounded-lg p-1.5 text-slate-500 hover:bg-pearl-surface dark:text-stone-400 dark:hover:bg-obsidian-elevated lg:hidden cursor-pointer"
+            aria-label={t("common.cancel")}
+          >
+            <FiX className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Trip selector */}
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="trip-selector"
+            className="text-xs font-semibold text-slate-500 dark:text-stone-400"
+          >
+            {t("dashboard.activeTrip")}
+          </label>
+          <div className="relative">
+            <select
+              id="trip-selector"
+              value={selectedTripId}
+              onChange={(e) => setSelectedTripId(e.target.value)}
+              className="w-full cursor-pointer appearance-none rounded-lg border border-pearl-border bg-pearl-surface px-3 py-2.5 pr-9 text-sm font-semibold text-slate-800 transition-colors focus:border-blue-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-primary/30 dark:border-obsidian-border dark:bg-obsidian dark:text-stone-200 dark:focus:border-gold dark:focus-visible:ring-gold/30"
             >
-              <FiX className="w-4 h-4" />
-            </button>
+              {trips.map((trip) => (
+                <option key={trip.id} value={trip.id}>
+                  {trip.name}
+                </option>
+              ))}
+            </select>
+            <FiChevronDown
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-stone-500"
+              aria-hidden
+            />
           </div>
         </div>
 
-        {/* Trip Selector */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">
-            {t("dashboard.activeTrip")}
-          </label>
-          <select
-            value={selectedTripId}
-            onChange={(e) => setSelectedTripId(e.target.value)}
-            className="w-full bg-pearl-surface dark:bg-obsidian text-slate-800 dark:text-stone-200 rounded-lg px-2.5 py-2 text-xs border border-pearl-border dark:border-obsidian-border font-semibold focus:outline-none focus:border-blue-primary dark:focus:border-gold transition-all cursor-pointer"
-          >
-            {trips.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Tab Navigation */}
-        <nav className="flex flex-col gap-1.5 mt-1">
-          {[
-            { path: "/dashboard", icon: FiBriefcase, label: t("dashboard.tabTrips") },
-            { path: "/dashboard/ai", icon: FiCpu, label: t("dashboard.tabAi") },
-            { path: "/dashboard/expenses", icon: FiDollarSign, label: t("dashboard.tabBills") },
-          ].map(({ path, icon: Icon, label }) => {
+        {/* Nav */}
+        <nav className="flex flex-col gap-1" aria-label={t("dashboard.workspace")}>
+          {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = pathname === path;
             return (
               <Link
                 key={path}
                 href={path}
                 onClick={() => setSidebarOpen(false)}
-                className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition-all text-left cursor-pointer ${
+                aria-current={isActive ? "page" : undefined}
+                className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-primary dark:focus-visible:ring-gold ${
                   isActive
-                    ? "bg-blue-primary dark:bg-gold text-white dark:text-obsidian shadow-md font-bold"
-                    : "text-pearl-muted dark:text-obsidian-muted hover:bg-pearl-surface dark:hover:bg-obsidian-elevated hover:text-slate-800 dark:hover:text-stone-200"
+                    ? "bg-blue-primary text-white shadow-sm dark:bg-gold dark:text-obsidian"
+                    : "text-slate-600 hover:bg-pearl-surface hover:text-slate-900 dark:text-stone-400 dark:hover:bg-obsidian-elevated dark:hover:text-stone-100"
                 }`}
               >
-                <Icon className="w-4 h-4" /> {label}
+                <Icon className="h-4 w-4 shrink-0" aria-hidden /> {label}
               </Link>
             );
           })}
         </nav>
       </div>
 
-      {/* Bottom user */}
-      <div className="p-4 sm:p-5 border-t border-pearl-border dark:border-obsidian-border bg-pearl-surface/50 dark:bg-obsidian/30 flex flex-col gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-primary to-blue-light dark:from-gold dark:to-ember flex items-center justify-center font-bold text-xs text-white dark:text-obsidian">
+      {/* User + sign out */}
+      <div className="mt-auto border-t border-pearl-border p-5 dark:border-obsidian-border">
+        <div className="mb-3 flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-primary to-blue-light text-xs font-bold text-white dark:from-gold dark:to-ember dark:text-obsidian">
             {user.name.charAt(0).toUpperCase()}
           </div>
-          <div className="truncate flex-1">
-            <h4 className="font-bold text-xs text-slate-800 dark:text-stone-200 truncate">{user.name}</h4>
-            <p className="text-[9.5px] text-pearl-muted dark:text-obsidian-muted truncate">{user.email}</p>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-slate-800 dark:text-stone-200">{user.name}</p>
+            <p className="truncate text-xs text-slate-500 dark:text-stone-400">{user.email}</p>
           </div>
         </div>
         <button
           onClick={signOut}
-          className="w-full py-2 px-3 rounded-lg border border-pearl-border dark:border-obsidian-border hover:bg-rose-accent/10 hover:border-rose-accent/30 text-pearl-muted hover:text-rose-accent dark:hover:text-rose-accent transition-all text-[11px] font-semibold flex items-center justify-center gap-2 cursor-pointer"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-pearl-border px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:border-rose-accent/40 hover:bg-rose-accent/10 hover:text-rose-accent dark:border-obsidian-border dark:text-stone-400 dark:hover:text-rose-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-accent cursor-pointer"
         >
-          <FiLogOut className="w-3.5 h-3.5" /> {t("dashboard.logOut")}
+          <FiLogOut className="h-3.5 w-3.5" aria-hidden /> {t("dashboard.logOut")}
         </button>
       </div>
     </>
   );
 
   return (
-    <div className="min-h-screen bg-pearl dark:bg-obsidian text-slate-900 dark:text-stone-100 flex font-sans transition-colors duration-300">
-      {/* Mobile Top Bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 px-4 py-3 glass-panel flex items-center justify-between">
+    <div className="flex min-h-screen bg-pearl font-sans text-slate-900 dark:bg-obsidian dark:text-stone-100">
+      {/* Mobile top bar */}
+      <header className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-pearl-border bg-pearl-card/95 px-4 py-3 backdrop-blur-sm dark:border-obsidian-border dark:bg-obsidian-card/95 lg:hidden">
         <div className="flex items-center gap-2">
-          <Logo size={28} />
-          <span className="font-display font-extrabold text-base tracking-tight text-slate-900 dark:text-stone-100">
+          <Logo size={26} />
+          <span className="font-display text-base font-extrabold tracking-tight text-slate-900 dark:text-stone-100">
             triplit
           </span>
         </div>
@@ -155,67 +172,88 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
           <LanguageToggle />
           <ThemeToggle />
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-card text-slate-600 dark:text-stone-300 cursor-pointer"
-            aria-label="Toggle Sidebar"
+            onClick={() => setSidebarOpen(true)}
+            className="rounded-lg border border-pearl-border bg-pearl-card p-2 text-slate-600 dark:border-obsidian-border dark:bg-obsidian-card dark:text-stone-300 cursor-pointer"
+            aria-label="Open menu"
           >
-            <FiMenu className="w-5 h-5" />
+            <FiMenu className="h-5 w-5" />
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Mobile drawer */}
       {sidebarOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} />
-          <aside className="relative w-72 max-w-[85vw] bg-pearl-card dark:bg-obsidian-card border-r border-pearl-border dark:border-obsidian-border flex flex-col justify-between z-10 animate-text-reveal">
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden
+          />
+          <aside className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col border-r border-pearl-border bg-pearl-card dark:border-obsidian-border dark:bg-obsidian-card">
+            {/* Toggles live in the mobile top bar; surface them in the drawer too */}
+            <div className="flex items-center justify-end gap-2 px-5 pt-4">
+              <LanguageToggle />
+              <ThemeToggle />
+            </div>
             {sidebarContent}
           </aside>
         </div>
       )}
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 border-r border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-card flex-col justify-between flex-shrink-0 z-10">
+      {/* Desktop sidebar */}
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-pearl-border bg-pearl-card dark:border-obsidian-border dark:bg-obsidian-card lg:flex">
+        <div className="flex items-center justify-end gap-2 px-5 pt-4">
+          <LanguageToggle />
+          <ThemeToggle />
+        </div>
         {sidebarContent}
       </aside>
 
-      {/* MAIN WORKSPACE */}
-      <main className="flex-1 h-[100vh] mt-[20px] sm:mt-[55px] lg:mt-0 overflow-y-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 relative pt-16 lg:pt-6">
-        {/* Decorative glow */}
-        <div className="absolute top-[10%] right-[10%] w-[30%] h-[30%] bg-blue-primary/[0.03] dark:bg-gold/[0.03] rounded-full blur-[100px] pointer-events-none" />
+      {/* Main workspace */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <main className="flex-1 px-4 pb-10 pt-[68px] sm:px-6 lg:px-8 lg:pt-8">
+          {/* Page header */}
+          <header className="mb-6 flex flex-col gap-4 border-b border-pearl-border pb-5 dark:border-obsidian-border sm:flex-row sm:items-end sm:justify-between">
+            <div className="min-w-0">
+              <nav
+                aria-label="Breadcrumb"
+                className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-stone-400"
+              >
+                <span>{t("dashboard.workspace")}</span>
+                <span aria-hidden>/</span>
+                <span className="truncate font-semibold text-blue-dark dark:text-gold">
+                  {activeTrip.name}
+                </span>
+              </nav>
+              <h1 className="mt-1.5 font-display text-2xl font-extrabold tracking-tight text-slate-900 dark:text-stone-50 sm:text-[1.7rem]">
+                {pageTitle}
+              </h1>
+            </div>
 
-        {/* Header */}
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 sm:mb-6 pb-3 sm:pb-4 border-b border-pearl-border dark:border-obsidian-border gap-3">
-          <div>
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-widest">
-              <span>{t("dashboard.workspace")}</span> /{" "}
-              <span className="text-blue-primary dark:text-gold font-extrabold">{activeTrip.name}</span>
+            {/* Trip stats */}
+            <div className="flex items-center divide-x divide-pearl-border dark:divide-obsidian-border">
+              <div className="pr-5">
+                <p className="text-xs font-medium text-slate-500 dark:text-stone-400">
+                  {t("dashboard.totalCost")}
+                </p>
+                <p className="mt-0.5 text-lg font-extrabold tabular-nums text-ember">
+                  ${totalBudget.toFixed(2)}
+                </p>
+              </div>
+              <div className="pl-5">
+                <p className="text-xs font-medium text-slate-500 dark:text-stone-400">
+                  {t("dashboard.friends")}
+                </p>
+                <p className="mt-0.5 text-lg font-extrabold tabular-nums text-slate-900 dark:text-stone-100">
+                  {activeTrip.friends.length}
+                </p>
+              </div>
             </div>
-            <h1 className="font-display font-black text-xl sm:text-2xl text-slate-900 dark:text-stone-50 mt-1">
-              {pathname === "/dashboard" && t("dashboard.titleTrips")}
-              {pathname === "/dashboard/ai" && t("dashboard.titleAi")}
-              {pathname === "/dashboard/expenses" && t("dashboard.titleExpenses")}
-            </h1>
-          </div>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="text-right">
-              <span className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">
-                {t("dashboard.totalCost")}
-              </span>
-              <h3 className="font-black text-sm text-ember">${totalBudget.toFixed(2)}</h3>
-            </div>
-            <div className="h-8 w-[1px] bg-pearl-border dark:bg-obsidian-border" />
-            <div className="text-right">
-              <span className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">
-                {t("dashboard.friends")}
-              </span>
-              <h3 className="font-black text-sm text-slate-800 dark:text-stone-100">{activeTrip.friends.length}</h3>
-            </div>
-          </div>
-        </header>
+          </header>
 
-        {children}
-      </main>
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
