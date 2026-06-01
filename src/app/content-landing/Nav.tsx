@@ -1,73 +1,110 @@
-import { FiMenu, FiX } from "react-icons/fi";
-import Logo from "../components/Logo";
+"use client";
+
 import { useState } from "react";
+import { FiMenu, FiX, FiArrowUpRight } from "react-icons/fi";
+import Logo from "../components/Logo";
 import { useRouter } from "next/navigation";
-import OutlineButtonComponent from "@/app/components/content-button/outlile-btn";
 import LanguageToggle from "@/app/components/LanguageToggle";
 import { useLanguage } from "@/i18n/LanguageProvider";
 
+const LINKS = [
+  { href: "#trip", key: "nav.trip" },
+  { href: "#settle", key: "nav.settle" },
+  { href: "#how", key: "nav.how" },
+] as const;
+
 export default function Nav() {
+  const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
+  const router = useRouter();
+  const goAuth = () => router.push("/authentication");
 
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  return (
+    <nav className="sticky top-0 z-40 w-full border-b border-line bg-canvas/90 backdrop-blur-sm">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <a href="#top" className="flex items-center gap-2.5 lp-focus" aria-label="Triplit home">
+          <Logo size={32} className="!rounded-lg !shadow-none" />
+          <span className="font-serif text-2xl leading-none text-ink">triplit</span>
+        </a>
 
-    const { t } = useLanguage();
-
-    const router = useRouter();
-
-    const redirectToAuth = () => router.push("/authentication");
-
-    return(
-      <nav className="sticky top-0 z-50 w-full px-4 sm:px-6 py-3.5 glass-panel">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Logo size={36} />
-            <span className="font-display font-extrabold text-xl tracking-tight text-stone-900 dark:text-stone-100">
-              triplit
-            </span>
-          </div>
-
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8 text-[13px] font-medium text-stone-500 dark:text-stone-400">
-            <a href="#features" className="hover:text-gold transition-colors duration-200">{t("nav.features")}</a>
-            <a href="#peek" className="hover:text-gold transition-colors duration-200">{t("nav.livePreview")}</a>
-            <a href="#testimonials" className="hover:text-gold transition-colors duration-200">{t("nav.testimonials")}</a>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <LanguageToggle />
-            <div className="hidden md:block">
-              <OutlineButtonComponent
-                label={t("common.signIn")}
-                onClick={redirectToAuth}
-              />
-            </div>
-      
-            {/* Mobile Hamburger */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-card text-stone-600 dark:text-stone-300 cursor-pointer"
-              aria-label="Toggle Menu"
+        {/* Desktop links */}
+        <div className="hidden items-center gap-9 md:flex">
+          {LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="lp-focus text-[15px] font-medium text-ink-soft transition-colors hover:text-ink"
             >
-              {mobileMenuOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
+              {t(link.key)}
+            </a>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          <LanguageToggle />
+          <button
+            onClick={goAuth}
+            className="lp-focus hidden rounded-full px-4 py-2 text-[15px] font-semibold text-ink transition-colors hover:text-sunset-ink sm:block"
+          >
+            {t("common.signIn")}
+          </button>
+          <button
+            onClick={goAuth}
+            className="lp-focus hidden items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[15px] font-semibold text-canvas transition-transform hover:-translate-y-0.5 active:translate-y-0 sm:inline-flex"
+          >
+            {t("landing.hero.ctaPrimary")}
+            <FiArrowUpRight className="h-4 w-4" />
+          </button>
+
+          {/* Mobile toggle */}
+          <button
+            onClick={() => setOpen((o) => !o)}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            className="lp-focus rounded-lg border border-line p-2 text-ink md:hidden"
+          >
+            {open ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {open && (
+        <div className="border-t border-line bg-canvas px-4 pb-5 pt-3 md:hidden">
+          <div className="flex flex-col">
+            {LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="lp-focus border-b border-line/70 py-3 text-base font-medium text-ink"
+              >
+                {t(link.key)}
+              </a>
+            ))}
+          </div>
+          <div className="mt-4 flex items-center gap-3">
+            <button
+              onClick={() => {
+                goAuth();
+                setOpen(false);
+              }}
+              className="lp-focus flex-1 rounded-full border border-line py-2.5 text-[15px] font-semibold text-ink"
+            >
+              {t("common.signIn")}
+            </button>
+            <button
+              onClick={() => {
+                goAuth();
+                setOpen(false);
+              }}
+              className="lp-focus flex-1 rounded-full bg-ink py-2.5 text-[15px] font-semibold text-canvas"
+            >
+              {t("landing.hero.ctaPrimary")}
             </button>
           </div>
         </div>
-
-        {/* Mobile Menu Dropdown */}
-        {mobileMenuOpen && (
-          <div className="md:hidden mt-3 pb-4 border-t border-pearl-border/50 dark:border-obsidian-border/50 pt-4 flex flex-col gap-3 animate-text-reveal">
-            <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-gold transition-colors px-2 py-1.5">{t("nav.features")}</a>
-            <a href="#peek" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-gold transition-colors px-2 py-1.5">{t("nav.livePreview")}</a>
-            <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-gold transition-colors px-2 py-1.5">{t("nav.testimonials")}</a>
-            <OutlineButtonComponent
-              label={t("common.signIn")}
-              onClick={() => {
-                redirectToAuth();
-                setMobileMenuOpen(false);
-              }}
-            />
-          </div>
-        )}
-      </nav>
-    )
+      )}
+    </nav>
+  );
 }

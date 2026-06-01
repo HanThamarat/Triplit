@@ -1,18 +1,29 @@
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
+import { Hanken_Grotesk, Young_Serif, Caveat } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
 import { LanguageProvider } from "@/i18n/LanguageProvider";
 
-const syne = DM_Sans({
+// Body + UI everywhere. Friendly, highly legible grotesk (replaces the
+// previously doubled DM Sans, which loaded the same family for both roles).
+const hanken = Hanken_Grotesk({
   subsets: ["latin"],
-  variable: "--font-display",
+  variable: "--font-hanken",
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+// Landing display voice: warm, chunky, organic serif (travel-journal feel).
+const youngSerif = Young_Serif({
   subsets: ["latin"],
-  variable: "--font-sans",
+  weight: "400",
+  variable: "--font-young",
+  display: "swap",
+});
+
+// Hand-written accent, used sparingly for the "money note" annotations.
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
   display: "swap",
 });
 
@@ -32,7 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${dmSans.variable} text-[14px] antialiased`}
+      className={`${hanken.variable} ${youngSerif.variable} ${caveat.variable} text-[14px] antialiased`}
       suppressHydrationWarning
     >
       <head>
