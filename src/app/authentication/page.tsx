@@ -1,49 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import {
-  FiArrowLeft,
-  FiArrowRight,
-  FiEye,
-  FiEyeOff,
-  FiCheck,
-} from "react-icons/fi";
-import { FcGoogle } from "react-icons/fc";
+import { useState, useEffect } from "react";
+import { FiArrowLeft, FiArrowRight, FiCheck } from "react-icons/fi";
 import Link from "next/link";
 import Logo from "@/app/components/Logo";
 import LanguageToggle from "@/app/components/LanguageToggle";
-import { authClient } from "@/lib/auth-client";
 import { useLanguage } from "@/i18n/LanguageProvider";
+import SignIn from "./contents/signIn";
+import SignUp from "./contents/signUp";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import createQueryString from "@/hooks/searchParams";
 
 export default function AuthPage() {
   const { t } = useLanguage();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const path = usePathname();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const pageState = searchParams.get("state");
+  
+  const [state, setState] = useState<"signin" | "signup">(() => pageState === "signup" ? "signup" : "signin");
 
-  const signinWithGoogle = async () => {
-    setError(null);
-    setGoogleLoading(true);
-    try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/dashboard",
-      });
-      // On success the browser is redirected by better-auth; no further work.
-    } catch {
-      setError(t("auth.googleError"));
-      setGoogleLoading(false);
+  useEffect(() => {
+    if (!pageState) {
+      router.push(path + "?" + createQueryString({ name: "state", value: "signin" })); 
     }
-  };
+  }, [pageState]);
 
-  // Email sign-in is presentational in this build (see CLAUDE.md); keep the
-  // form semantics real but don't fake a result.
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
 
   return (
     <main className="min-h-screen bg-canvas font-sans text-ink antialiased lg:grid lg:grid-cols-[1.05fr_0.95fr]">
@@ -150,80 +133,24 @@ export default function AuthPage() {
               </p>
             </div>
 
-            <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
-              <Field
-                id="email"
-                type="email"
-                label={t("auth.email")}
-                placeholder={t("auth.emailPlaceholder")}
-                autoComplete="email"
-                value={email}
-                onChange={setEmail}
-              />
-
-              <div>
-                <label
-                  htmlFor="password"
-                  className="mb-1.5 block text-[13px] font-semibold text-ink"
-                >
-                  {t("auth.password")}
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder={t("auth.passwordPlaceholder")}
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border border-line-strong bg-canvas px-4 py-3 pr-11 text-[15px] text-ink transition-colors placeholder:text-ink-faint focus:border-coast-deep focus:outline-none focus:ring-2 focus:ring-coast/30"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
-                    className="lp-focus absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-ink-faint transition-colors hover:text-ink"
-                  >
-                    {showPassword ? <FiEyeOff className="h-[18px] w-[18px]" /> : <FiEye className="h-[18px] w-[18px]" />}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="lp-focus group mt-1 inline-flex w-full items-center justify-center gap-2 rounded-full bg-sunset-deep px-6 py-3.5 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5 active:translate-y-0"
-              >
-                {t("auth.signIn")}
-                <FiArrowRight className="h-[18px] w-[18px] transition-transform group-hover:translate-x-0.5" />
-              </button>
-            </form>
-
-            <div className="my-6 flex items-center gap-4" aria-hidden="true">
-              <span className="h-px flex-1 bg-line" />
-              <span className="text-[13px] text-ink-faint">{t("common.or")}</span>
-              <span className="h-px flex-1 bg-line" />
+            <div className=" duration-100 ease-in w-full bg-[#F8F2EB] p-[5px] mb-2.5 rounded-full flex justify-center gap-[5px]">
+                <button onClick={() => {
+                  router.push(path + "?" + createQueryString({ name: "state", value: "signin" }));
+                  setState("signin");
+                }} className={` cursor-pointer ${ state === "signin" ? 'bg-[#e6dfd8]' : 'bg-transparent' } w-full rounded-full py-[5px]`}>
+                  {t("auth.signIn")}
+                </button>
+                <button onClick={() => {
+                  router.push(path + "?" + createQueryString({ name: "state", value: "signup" }));
+                  setState("signup")
+                }} className={` cursor-pointer ${ state === "signup" ? 'bg-[#e6dfd8]' : 'bg-transparent' } w-full rounded-full py-[5px]`}>
+                  {t("auth.signUp")}
+                </button>
             </div>
-
-            <button
-              type="button"
-              onClick={signinWithGoogle}
-              disabled={googleLoading}
-              className="lp-focus inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-line-strong bg-canvas px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-shell disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {googleLoading ? (
-                <span className="h-[18px] w-[18px] animate-spin rounded-full border-2 border-line-strong border-t-ink" />
-              ) : (
-                <FcGoogle className="h-[20px] w-[20px]" />
-              )}
-              {t("auth.continueGoogle")}
-            </button>
-
-            {error && (
-              <p role="alert" className="mt-4 rounded-xl bg-sunset-wash px-4 py-3 text-[14px] font-medium text-sunset-deep">
-                {error}
-              </p>
-            )}
+            
+            {
+              state === "signin" ? <SignIn /> : <SignUp />
+            }
           </div>
         </div>
       </div>
@@ -253,42 +180,6 @@ function Avatar({ name, tone, size = 30 }: { name: string; tone: Tone; size?: nu
     >
       {name.charAt(0)}
     </span>
-  );
-}
-
-function Field({
-  id,
-  type,
-  label,
-  placeholder,
-  autoComplete,
-  value,
-  onChange,
-}: {
-  id: string;
-  type: string;
-  label: string;
-  placeholder: string;
-  autoComplete: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div>
-      <label htmlFor={id} className="mb-1.5 block text-[13px] font-semibold text-ink">
-        {label}
-      </label>
-      <input
-        id={id}
-        name={id}
-        type={type}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-line-strong bg-canvas px-4 py-3 text-[15px] text-ink transition-colors placeholder:text-ink-faint focus:border-coast-deep focus:outline-none focus:ring-2 focus:ring-coast/30"
-      />
-    </div>
   );
 }
 
