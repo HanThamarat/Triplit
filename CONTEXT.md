@@ -92,20 +92,20 @@ As defined by the `frontend-design` skill in `.agents/skills/frontend-design/SKI
 ## 🛠️ Developer Commands & Workflows
 
 ### Setup Dependencies
-Install packages using `pnpm`:
+Install packages using `npm`:
 ```bash
-pnpm install
+npm install
 ```
 
 ### Local Dev Run
 Start the Next.js fast-refresh server:
 ```bash
-pnpm run dev
+npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) to inspect.
 
 ### Build Compilation Check
 Confirm TypeScript typings, styling rules, and production bundle formats build correctly:
 ```bash
-pnpm run build
+npm run build
 ```
