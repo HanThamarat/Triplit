@@ -2,6 +2,9 @@
   "name": "triplit",
   "version": "0.1.0",
   "private": true,
+  "overrides": {
+    "kysely": "0.28.17"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
