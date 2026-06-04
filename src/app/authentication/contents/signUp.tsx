@@ -1,11 +1,12 @@
 import { signUpSchema, signUpType } from "@/@types/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
-import { FiArrowRight, FiCheck, FiMail } from "react-icons/fi";
+import { FiArrowRight, FiCheck } from "react-icons/fi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { authClient } from "@/lib/auth-client";
 import Input from "@/app/components/content-input/input";
+import OtpVerify from "./otp-verify";
 
 // Mirrors src/@types/auth.ts passwordPolicy. Each rule reads as a positive
 // requirement, so the same list powers the live checklist below the field.
@@ -55,17 +56,11 @@ export default function SignUp() {
 
     if (sentTo) {
         return (
-            <div className="w-full" role="status">
-                <div className="flex flex-col items-center gap-4 rounded-2xl border border-line bg-canvas-sink px-6 py-8 text-center">
-                    <span className="grid h-12 w-12 place-items-center rounded-full bg-meadow/12 text-meadow-deep">
-                        <FiMail className="h-6 w-6" />
-                    </span>
-                    <h2 className="font-serif text-xl text-ink">{t("auth.checkEmailTitle")}</h2>
-                    <p className="max-w-[36ch] text-[14px] leading-relaxed text-ink-soft [text-wrap:pretty]">
-                        {t("auth.checkEmailBody", { email: sentTo })}
-                    </p>
-                </div>
-            </div>
+            <OtpVerify
+                email={sentTo}
+                purpose="email-verification"
+                onChangeEmail={() => setSentTo(null)}
+            />
         );
     }
 

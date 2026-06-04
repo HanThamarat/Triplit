@@ -1,4 +1,8 @@
 import { sendEmail } from "@better-auth/infra";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 interface SendEmailVerifyOTPProps {
     email: string;
@@ -36,3 +40,14 @@ export const sendEmailSignUpVerifyOTP = async ({
 
     return result;
 }
+
+export const emailTransport = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+    }
+});
