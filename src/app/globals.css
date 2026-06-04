@@ -405,9 +405,28 @@
 .auth-rise-2 { animation: auth-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
 .auth-rise-3 { animation: auth-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
 
+/* OTP feedback: a short horizontal shake on a rejected code, and a soft pop on
+   the success card. Both have reduced-motion fallbacks below. */
+@keyframes otp-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+.otp-shake { animation: otp-shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+@keyframes otp-pop {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.otp-pop { animation: otp-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .lp-float, .lp-float-slow { animation: none !important; }
   .lp-route { stroke-dashoffset: 0 !important; animation: none !important; }
   .auth-rise, .auth-rise-2, .auth-rise-3 { animation: none !important; }
+  .otp-shake { animation: none !important; }
+  .otp-pop { animation: none !important; opacity: 1 !important; transform: none !important; }
 }

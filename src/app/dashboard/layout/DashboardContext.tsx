@@ -8,6 +8,23 @@ export interface Friend {
   color: string;
 }
 
+/* Flat "Sunset Coast" avatar tones, matching the landing page. Derived from a
+   friend's id so the look is stable and on-brand regardless of the (legacy)
+   `color` string persisted in localStorage. */
+const FRIEND_TONES = [
+  "bg-sunset text-white",
+  "bg-coast text-white",
+  "bg-meadow text-white",
+  "bg-ink text-canvas",
+  "bg-sun text-ink",
+] as const;
+
+export function friendTone(id: string): string {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return FRIEND_TONES[hash % FRIEND_TONES.length];
+}
+
 export interface Expense {
   id: string;
   description: string;

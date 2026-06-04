@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { FiPlus, FiTrash2, FiUserPlus, FiDollarSign, FiInfo, FiLayers, FiCheckCircle } from "react-icons/fi";
 import { useLanguage } from "@/i18n/LanguageProvider";
+import { friendTone } from "../../layout/DashboardContext";
 
 interface Friend {
   id: string;
@@ -26,10 +27,24 @@ interface ExpenseViewProps {
 }
 
 const CATEGORY_COLORS = {
-  Food: "bg-amber-500/10 border-amber-500/25 text-amber-600 dark:text-amber-400",
-  Transport: "bg-blue-subtle dark:bg-gold/10 border-blue-primary/25 dark:border-gold/25 text-blue-primary dark:text-gold",
-  Lodging: "bg-luxe/10 border-luxe/25 text-luxe dark:text-luxe-muted",
-  Fun: "bg-rose-accent/10 border-rose-accent/25 text-rose-accent dark:text-rose-muted",
+  Food: "bg-sunset-wash text-sunset-ink",
+  Transport: "bg-coast-wash text-coast-deep",
+  Lodging: "bg-sun/25 text-ink",
+  Fun: "bg-meadow/15 text-meadow-deep",
+};
+
+// Donut + legend swatch per category, drawn from the "Sunset Coast" tokens.
+const CATEGORY_DOT: Record<Expense["category"], string> = {
+  Food: "bg-sunset",
+  Transport: "bg-coast",
+  Lodging: "bg-sun",
+  Fun: "bg-meadow",
+};
+const CATEGORY_STROKE: Record<Expense["category"], string> = {
+  Food: "var(--color-sunset)",
+  Transport: "var(--color-coast)",
+  Lodging: "var(--color-sun)",
+  Fun: "var(--color-meadow)",
 };
 
 const FRIEND_COLORS = [
@@ -175,32 +190,35 @@ export default function ExpenseView({ initialFriends, initialExpenses, onUpdateS
     setSplitWithIds((prev) => prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]);
   };
 
+  const inputClass =
+    "w-full rounded-xl border border-line bg-canvas px-3 py-2.5 text-xs text-ink placeholder:text-ink-faint transition-colors focus:border-coast focus:outline-none focus:ring-2 focus:ring-coast/30";
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start font-sans">
+    <div className="grid grid-cols-1 items-start gap-5 font-sans sm:gap-6 lg:grid-cols-12">
 
       {/* LEFT: Form + Ledger */}
-      <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6">
+      <div className="flex flex-col gap-5 sm:gap-6 lg:col-span-7">
 
         {/* Form */}
-        <div className="p-5 sm:p-6 rounded-2xl border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-card shadow-sm">
-          <h3 className="font-display font-extrabold text-sm text-slate-800 dark:text-stone-50 mb-4 sm:mb-5 flex items-center gap-2">
-            <FiDollarSign className="w-4 h-4 text-blue-primary dark:text-gold" /> {t("expenses.record")}
+        <div className="rounded-3xl border border-line bg-canvas p-5 lp-postcard sm:p-6">
+          <h3 className="mb-5 flex items-center gap-2 font-serif text-lg text-ink">
+            <FiDollarSign className="h-4 w-4 text-sunset" /> {t("expenses.record")}
           </h3>
-          <form onSubmit={handleAddExpense} className="space-y-3 sm:space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <form onSubmit={handleAddExpense} className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">{t("expenses.name")}</label>
-                <input required value={desc} onChange={(e) => setDesc(e.target.value)} placeholder={t("expenses.namePlaceholder")} className="w-full mt-1.5 bg-pearl-surface dark:bg-obsidian text-slate-800 dark:text-stone-100 rounded-xl px-3 py-2.5 text-xs border border-pearl-border dark:border-obsidian-border focus:border-blue-primary dark:focus:border-gold focus:outline-none transition-all" />
+                <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-faint">{t("expenses.name")}</label>
+                <input required value={desc} onChange={(e) => setDesc(e.target.value)} placeholder={t("expenses.namePlaceholder")} className={`mt-1.5 ${inputClass}`} />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">{t("expenses.amount")}</label>
-                <input required type="number" step="0.01" min="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={t("expenses.amountPlaceholder")} className="w-full mt-1.5 bg-pearl-surface dark:bg-obsidian text-slate-800 dark:text-stone-100 rounded-xl px-3 py-2.5 text-xs border border-pearl-border dark:border-obsidian-border focus:border-blue-primary dark:focus:border-gold focus:outline-none transition-all" />
+                <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-faint">{t("expenses.amount")}</label>
+                <input required type="number" step="0.01" min="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={t("expenses.amountPlaceholder")} className={`mt-1.5 ${inputClass}`} />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">{t("expenses.category")}</label>
-                <select value={category} onChange={(e) => setCategory(e.target.value as typeof category)} className="w-full mt-1.5 bg-pearl-surface dark:bg-obsidian text-slate-800 dark:text-stone-100 rounded-xl px-3 py-2.5 text-xs border border-pearl-border dark:border-obsidian-border focus:border-blue-primary dark:focus:border-gold focus:outline-none transition-all">
+                <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-faint">{t("expenses.category")}</label>
+                <select value={category} onChange={(e) => setCategory(e.target.value as typeof category)} className={`mt-1.5 cursor-pointer ${inputClass}`}>
                   <option value="Food">{t("expenses.catFood")}</option>
                   <option value="Transport">{t("expenses.catTransport")}</option>
                   <option value="Lodging">{t("expenses.catLodging")}</option>
@@ -208,8 +226,8 @@ export default function ExpenseView({ initialFriends, initialExpenses, onUpdateS
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">{t("expenses.paidBy")}</label>
-                <select value={payerId} onChange={(e) => setPayerId(e.target.value)} className="w-full mt-1.5 bg-pearl-surface dark:bg-obsidian text-slate-800 dark:text-stone-100 rounded-xl px-3 py-2.5 text-xs border border-pearl-border dark:border-obsidian-border focus:border-blue-primary dark:focus:border-gold focus:outline-none transition-all">
+                <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-faint">{t("expenses.paidBy")}</label>
+                <select value={payerId} onChange={(e) => setPayerId(e.target.value)} className={`mt-1.5 cursor-pointer ${inputClass}`}>
                   {friends.map((f) => (<option key={f.id} value={f.id}>{f.name}</option>))}
                 </select>
               </div>
@@ -217,10 +235,10 @@ export default function ExpenseView({ initialFriends, initialExpenses, onUpdateS
 
             {/* Split picker */}
             <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">{t("expenses.splitRecipients")}</label>
+              <div className="mb-2 flex items-center justify-between">
+                <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-faint">{t("expenses.splitRecipients")}</label>
                 <button type="button" onClick={() => { setSplitAll(true); setSplitWithIds(friends.map((f) => f.id)); }}
-                  className={`text-[9px] font-bold uppercase transition-all cursor-pointer ${splitAll ? "text-blue-primary dark:text-gold" : "text-pearl-muted hover:text-slate-600"}`}>
+                  className={`cursor-pointer text-[10px] font-semibold uppercase tracking-wider transition-colors ${splitAll ? "text-coast-deep" : "text-ink-faint hover:text-ink"}`}>
                   {t("expenses.splitEqually")}
                 </button>
               </div>
@@ -229,12 +247,12 @@ export default function ExpenseView({ initialFriends, initialExpenses, onUpdateS
                   const selected = splitAll || splitWithIds.includes(f.id);
                   return (
                     <button key={f.id} type="button" onClick={() => toggleSplitFriend(f.id)}
-                      className={`px-2.5 sm:px-3 py-1.5 rounded-lg border text-[11px] sm:text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 ${
+                      className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
                         selected
-                          ? "border-blue-primary/30 dark:border-gold/30 bg-blue-subtle dark:bg-gold/[0.06] text-blue-primary dark:text-gold font-bold"
-                          : "border-pearl-border dark:border-obsidian-border bg-pearl-surface dark:bg-obsidian text-pearl-muted dark:text-obsidian-muted"
+                          ? "border-coast/40 bg-coast-wash text-coast-deep"
+                          : "border-line bg-canvas text-ink-faint hover:text-ink"
                       }`}>
-                      <span className={`w-2 h-2 rounded-full bg-gradient-to-r ${f.color}`} />
+                      <span className={`h-2 w-2 rounded-full ${friendTone(f.id)}`} />
                       {f.name}
                     </button>
                   );
@@ -242,49 +260,49 @@ export default function ExpenseView({ initialFriends, initialExpenses, onUpdateS
               </div>
             </div>
 
-            <button type="submit" className="w-full py-2.5 sm:py-3 rounded-xl font-bold text-xs bg-blue-primary dark:bg-gold text-white dark:text-obsidian shadow hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1">
-              <FiPlus className="w-4 h-4" /> {t("expenses.addToLedger")}
+            <button type="submit" className="lp-focus flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-full bg-sunset-deep py-3 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5 active:translate-y-0">
+              <FiPlus className="h-4 w-4" /> {t("expenses.addToLedger")}
             </button>
           </form>
         </div>
 
         {/* Ledger */}
-        <div className="p-5 sm:p-6 rounded-2xl border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-card shadow-sm">
-          <div className="flex justify-between items-center mb-4 sm:mb-5 border-b border-pearl-border/50 dark:border-obsidian-border/50 pb-3">
-            <h3 className="font-display font-extrabold text-sm text-slate-800 dark:text-stone-50">{t("expenses.groupLedger")}</h3>
-            <span className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">{t("expenses.records", { n: expenses.length })}</span>
+        <div className="rounded-3xl border border-line bg-canvas p-5 lp-postcard sm:p-6">
+          <div className="mb-5 flex items-center justify-between border-b border-line pb-3">
+            <h3 className="font-serif text-lg text-ink">{t("expenses.groupLedger")}</h3>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-faint">{t("expenses.records", { n: expenses.length })}</span>
           </div>
-          <div className="space-y-3 max-h-[300px] sm:max-h-[350px] overflow-y-auto pr-1">
+          <div className="max-h-[350px] space-y-3 overflow-y-auto pr-1">
             {expenses.length === 0 ? (
-              <div className="text-center py-8 sm:py-10 text-pearl-muted dark:text-obsidian-muted text-xs">
-                <FiInfo className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-2" /> {t("expenses.noExpenses")}
+              <div className="py-10 text-center text-xs text-ink-faint">
+                <FiInfo className="mx-auto mb-2 h-6 w-6" /> {t("expenses.noExpenses")}
               </div>
             ) : (
               expenses.map((ex) => {
                 const payer = friends.find((f) => f.id === ex.payerId);
                 const isSettlement = ex.description.startsWith("Settlement:");
                 return (
-                  <div key={ex.id} className="p-3 sm:p-3.5 rounded-xl border border-pearl-border dark:border-obsidian-border/60 bg-pearl-surface/50 dark:bg-obsidian-elevated/50 flex items-center justify-between hover:border-blue-primary/15 dark:hover:border-gold/15 transition-all duration-200">
-                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr ${payer?.color || "from-slate-500 to-slate-700 text-white"} flex items-center justify-center font-bold text-[10px] sm:text-xs flex-shrink-0`}>
+                  <div key={ex.id} className="flex items-center justify-between rounded-2xl border border-line bg-canvas-sink/50 p-3.5 transition-colors hover:border-coast/30">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold ${payer ? friendTone(payer.id) : "bg-shell text-ink-soft"}`}>
                         {payer?.name[0].toUpperCase() || "?"}
                       </div>
                       <div className="min-w-0">
-                        <h4 className="font-bold text-[11px] sm:text-xs text-slate-800 dark:text-stone-200 leading-tight truncate">{ex.description}</h4>
-                        <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 flex-wrap">
-                          <span className={`text-[8px] px-1.5 py-0.5 rounded border uppercase tracking-wider font-bold ${isSettlement ? "bg-emerald-accent/10 border-emerald-accent/20 text-emerald-accent" : CATEGORY_COLORS[ex.category]}`}>
+                        <h4 className="truncate text-xs font-semibold leading-tight text-ink">{ex.description}</h4>
+                        <div className="mt-1 flex flex-wrap items-center gap-2">
+                          <span className={`rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${isSettlement ? "bg-meadow/15 text-meadow-deep" : CATEGORY_COLORS[ex.category]}`}>
                             {isSettlement ? t("expenses.settled") : t(`categories.${ex.category}`)}
                           </span>
-                          <span className="text-[8px] sm:text-[9px] text-pearl-muted dark:text-obsidian-muted font-medium">
+                          <span className="text-[9px] font-medium text-ink-faint">
                             {t("expenses.sharing", { name: payer?.name || "?", n: ex.splitWithIds.length })}
                           </span>
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                      <span className="font-black text-[11px] sm:text-xs text-slate-900 dark:text-stone-50">${ex.amount.toFixed(2)}</span>
-                      <button onClick={() => handleDeleteExpense(ex.id)} className="p-1 sm:p-1.5 text-pearl-muted hover:text-rose-accent rounded hover:bg-pearl-surface dark:hover:bg-obsidian-elevated transition-all cursor-pointer" title={t("common.delete")}>
-                        <FiTrash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    <div className="flex flex-shrink-0 items-center gap-3">
+                      <span className="text-xs font-semibold tabular-nums text-ink">${ex.amount.toFixed(2)}</span>
+                      <button onClick={() => handleDeleteExpense(ex.id)} className="lp-focus rounded-md p-1.5 text-ink-faint transition-colors hover:bg-sunset-wash hover:text-sunset-ink" title={t("common.delete")}>
+                        <FiTrash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>
@@ -296,35 +314,35 @@ export default function ExpenseView({ initialFriends, initialExpenses, onUpdateS
       </div>
 
       {/* RIGHT: Balances, Chart, Settlement */}
-      <div className="lg:col-span-5 flex flex-col gap-5 sm:gap-6">
+      <div className="flex flex-col gap-5 sm:gap-6 lg:col-span-5">
 
         {/* Friends & Balances */}
-        <div className="p-5 sm:p-6 rounded-2xl border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-card shadow-sm">
-          <div className="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b border-pearl-border/50 dark:border-obsidian-border/50">
-            <h3 className="font-display font-extrabold text-sm text-slate-800 dark:text-stone-50">{t("expenses.mates")}</h3>
-            <span className="text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">{t("expenses.active", { n: friends.length })}</span>
+        <div className="rounded-3xl border border-line bg-canvas p-5 lp-postcard sm:p-6">
+          <div className="mb-4 flex items-center justify-between border-b border-line pb-3">
+            <h3 className="font-serif text-lg text-ink">{t("expenses.mates")}</h3>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-faint">{t("expenses.active", { n: friends.length })}</span>
           </div>
-          <form onSubmit={handleAddFriend} className="flex gap-2 mb-3 sm:mb-4">
-            <input required value={newFriendName} onChange={(e) => setNewFriendName(e.target.value)} placeholder={t("expenses.friendNamePlaceholder")} className="flex-1 bg-pearl-surface dark:bg-obsidian text-slate-800 dark:text-stone-100 rounded-lg px-3 py-2 text-[11px] border border-pearl-border dark:border-obsidian-border focus:border-blue-primary dark:focus:border-gold focus:outline-none transition-all" />
-            <button type="submit" className="px-3 py-2 bg-blue-primary dark:bg-gold text-white dark:text-obsidian rounded-lg hover:scale-105 active:scale-95 transition-all text-xs font-bold flex items-center justify-center cursor-pointer shadow-sm">
-              <FiUserPlus className="w-3.5 h-3.5" />
+          <form onSubmit={handleAddFriend} className="mb-4 flex gap-2">
+            <input required value={newFriendName} onChange={(e) => setNewFriendName(e.target.value)} placeholder={t("expenses.friendNamePlaceholder")} className={inputClass} />
+            <button type="submit" className="lp-focus grid cursor-pointer place-items-center rounded-full bg-sunset-deep px-3.5 text-white transition-transform hover:-translate-y-0.5 active:translate-y-0">
+              <FiUserPlus className="h-3.5 w-3.5" />
             </button>
           </form>
-          <div className="space-y-2.5 sm:space-y-3 max-h-[200px] sm:max-h-[220px] overflow-y-auto pr-1">
+          <div className="max-h-[220px] space-y-3 overflow-y-auto pr-1">
             {friends.map((f) => {
               const bal = balances[f.id] || 0;
               const formattedBal = Math.round(bal * 100) / 100;
               const isPositive = formattedBal > 0.05;
               const isZero = Math.abs(formattedBal) <= 0.05;
               return (
-                <div key={f.id} className="flex items-center justify-between text-xs py-0.5">
+                <div key={f.id} className="flex items-center justify-between py-0.5 text-xs">
                   <div className="flex items-center gap-2">
-                    <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr ${f.color} flex items-center justify-center font-bold text-[9px] sm:text-[10px]`}>
+                    <div className={`flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-semibold ${friendTone(f.id)}`}>
                       {f.name[0].toUpperCase()}
                     </div>
-                    <span className="font-bold text-slate-800 dark:text-stone-200">{f.name}</span>
+                    <span className="font-semibold text-ink">{f.name}</span>
                   </div>
-                  <span className={`font-black text-xs ${isZero ? "text-pearl-muted dark:text-obsidian-muted" : isPositive ? "text-emerald-accent" : "text-rose-accent"}`}>
+                  <span className={`text-xs font-semibold tabular-nums ${isZero ? "text-ink-faint" : isPositive ? "text-meadow-deep" : "text-sunset-ink"}`}>
                     {isZero ? t("expenses.balanced") : isPositive ? `+ $${formattedBal.toFixed(2)}` : `- $${Math.abs(formattedBal).toFixed(2)}`}
                   </span>
                 </div>
@@ -334,48 +352,40 @@ export default function ExpenseView({ initialFriends, initialExpenses, onUpdateS
         </div>
 
         {/* Category Chart */}
-        <div className="p-5 sm:p-6 rounded-2xl border border-pearl-border dark:border-obsidian-border bg-pearl-card dark:bg-obsidian-card shadow-sm">
-          <h3 className="font-display font-extrabold text-sm text-slate-800 dark:text-stone-50 mb-3 sm:mb-4">{t("expenses.categoryAnalysis")}</h3>
+        <div className="rounded-3xl border border-line bg-canvas p-5 lp-postcard sm:p-6">
+          <h3 className="mb-4 font-serif text-lg text-ink">{t("expenses.categoryAnalysis")}</h3>
           {categoryStats.total === 0 ? (
-            <div className="text-center py-5 sm:py-6 text-pearl-muted dark:text-obsidian-muted text-xs">{t("expenses.addToSeeBreakdown")}</div>
+            <div className="py-6 text-center text-xs text-ink-faint">{t("expenses.addToSeeBreakdown")}</div>
           ) : (
-            <div className="flex items-center gap-4 sm:gap-6">
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 42 42">
-                  <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="currentColor" strokeWidth="4" className="text-pearl-border dark:text-obsidian-border" />
+            <div className="flex items-center gap-6">
+              <div className="relative h-24 w-24 flex-shrink-0">
+                <svg className="h-full w-full -rotate-90" viewBox="0 0 42 42">
+                  <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="currentColor" strokeWidth="4" className="text-line" />
                   {chartSlices.map((slice, i) => {
                     const strokeDash = `${slice.percentage} ${100 - slice.percentage}`;
                     const strokeOffset = 100 - slice.startPercent * 100;
-                    let strokeColor = "#f59e0b";
-                    if (slice.category === "Transport") strokeColor = "#3B82F6";
-                    if (slice.category === "Lodging") strokeColor = "#9B7AEA";
-                    if (slice.category === "Fun") strokeColor = "#F0556E";
                     return (
-                      <circle key={i} cx="21" cy="21" r="15.915" fill="transparent" stroke={strokeColor} strokeWidth="4" strokeDasharray={strokeDash} strokeDashoffset={strokeOffset} className="transition-all duration-500 ease-in-out" />
+                      <circle key={i} cx="21" cy="21" r="15.915" fill="transparent" stroke={CATEGORY_STROKE[slice.category]} strokeWidth="4" strokeDasharray={strokeDash} strokeDashoffset={strokeOffset} className="transition-all duration-500 ease-in-out" />
                     );
                   })}
                 </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center font-sans">
-                  <span className="text-[8px] sm:text-[10px] font-bold text-pearl-muted dark:text-obsidian-muted uppercase tracking-wider">{t("expenses.total")}</span>
-                  <span className="text-[11px] sm:text-xs font-black text-slate-900 dark:text-stone-50">${categoryStats.total.toFixed(0)}</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-[9px] font-semibold uppercase tracking-wider text-ink-faint">{t("expenses.total")}</span>
+                  <span className="font-serif text-sm tabular-nums text-ink">${categoryStats.total.toFixed(0)}</span>
                 </div>
               </div>
-              <div className="flex-1 space-y-1.5 sm:space-y-2 text-xs">
+              <div className="flex-1 space-y-2 text-xs">
                 {Object.entries(categoryStats.breakdown).map(([cat, amt]) => {
                   const percent = categoryStats.total > 0 ? Math.round((amt / categoryStats.total) * 100) : 0;
-                  let dotColor = "bg-amber-500";
-                  if (cat === "Transport") dotColor = "bg-blue-primary";
-                  if (cat === "Lodging") dotColor = "bg-luxe";
-                  if (cat === "Fun") dotColor = "bg-rose-accent";
                   return (
                     <div key={cat} className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-slate-600 dark:text-obsidian-muted">
-                        <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+                      <div className="flex items-center gap-1.5 text-ink-soft">
+                        <span className={`h-2 w-2 rounded-full ${CATEGORY_DOT[cat as Expense["category"]]}`} />
                         <span className="font-medium">{t(`categories.${cat}`)}</span>
                       </div>
-                      <div className="text-right">
-                        <span className="font-bold text-slate-800 dark:text-stone-200">${amt.toFixed(0)}</span>
-                        <span className="text-[10px] text-pearl-muted dark:text-obsidian-muted ml-1.5">({percent}%)</span>
+                      <div className="text-right tabular-nums">
+                        <span className="font-semibold text-ink">${amt.toFixed(0)}</span>
+                        <span className="ml-1.5 text-[10px] text-ink-faint">({percent}%)</span>
                       </div>
                     </div>
                   );
@@ -385,20 +395,20 @@ export default function ExpenseView({ initialFriends, initialExpenses, onUpdateS
           )}
         </div>
 
-        {/* Settlement */}
-        <div className="p-5 sm:p-6 rounded-2xl border border-pearl-border dark:border-obsidian-border bg-gradient-to-b from-slate-800 to-slate-900 dark:from-obsidian-card dark:to-obsidian-surface text-stone-100 shadow-lg">
-          <div className="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b border-slate-700 dark:border-obsidian-border">
-            <h3 className="font-display font-extrabold text-sm text-blue-light dark:text-gold flex items-center gap-1.5">
-              <FiLayers className="w-4 h-4" /> {t("expenses.optimalSettlement")}
+        {/* Settlement — the page's one dark moment */}
+        <div className="rounded-3xl bg-ink p-5 text-canvas shadow-lg sm:p-6">
+          <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
+            <h3 className="flex items-center gap-1.5 font-serif text-lg text-sun">
+              <FiLayers className="h-4 w-4" /> {t("expenses.optimalSettlement")}
             </h3>
-            <span className="text-[8px] sm:text-[9px] bg-blue-primary/15 dark:bg-gold/10 border border-blue-primary/20 dark:border-gold/15 text-blue-light dark:text-gold px-1.5 sm:px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+            <span className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-sun">
               {t("expenses.paths", { n: settlementTransactions.length })}
             </span>
           </div>
           <div className="space-y-3">
             {settlementTransactions.length === 0 ? (
-              <div className="text-center py-5 sm:py-6 text-stone-400 text-xs flex flex-col items-center gap-1">
-                <FiCheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-accent" />
+              <div className="flex flex-col items-center gap-1 py-6 text-center text-xs text-canvas/60">
+                <FiCheckCircle className="h-6 w-6 text-meadow" />
                 {t("expenses.allSettled")}
               </div>
             ) : (
@@ -406,22 +416,22 @@ export default function ExpenseView({ initialFriends, initialExpenses, onUpdateS
                 const from = friends.find((f) => f.id === tx.fromId);
                 const to = friends.find((f) => f.id === tx.toId);
                 return (
-                  <div key={idx} className="p-3 sm:p-3.5 rounded-xl border border-slate-700 dark:border-obsidian-border bg-slate-800/60 dark:bg-obsidian/60 flex items-center justify-between text-xs gap-2">
-                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
-                      <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-tr ${from?.color || "from-slate-500 to-slate-700 text-white"} flex items-center justify-center font-bold text-[8px] sm:text-[9px] flex-shrink-0`}>
+                  <div key={idx} className="flex items-center justify-between gap-2 rounded-2xl bg-white/[0.06] p-3.5 text-xs">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
+                      <div className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-semibold ${from ? friendTone(from.id) : "bg-white/15 text-canvas"}`}>
                         {from?.name[0].toUpperCase()}
                       </div>
-                      <span className="font-bold text-stone-300 text-[11px] sm:text-xs truncate">{from?.name}</span>
-                      <span className="text-[8px] sm:text-[9px] font-bold text-rose-accent bg-rose-accent/10 border border-rose-accent/20 px-1 sm:px-1.5 py-0.5 rounded shadow flex-shrink-0">
+                      <span className="truncate text-xs font-semibold text-canvas/80">{from?.name}</span>
+                      <span className="flex-shrink-0 rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold tabular-nums text-sun">
                         ${tx.amount.toFixed(2)}
                       </span>
-                      <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-tr ${to?.color || "from-slate-500 to-slate-700 text-white"} flex items-center justify-center font-bold text-[8px] sm:text-[9px] flex-shrink-0`}>
+                      <div className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-semibold ${to ? friendTone(to.id) : "bg-white/15 text-canvas"}`}>
                         {to?.name[0].toUpperCase()}
                       </div>
-                      <span className="font-bold text-stone-300 text-[11px] sm:text-xs truncate">{to?.name}</span>
+                      <span className="truncate text-xs font-semibold text-canvas/80">{to?.name}</span>
                     </div>
                     <button onClick={() => handleSettleDebt(tx.fromId, tx.toId, tx.amount)}
-                      className="px-2 sm:px-2.5 py-1.5 bg-blue-primary dark:bg-gold text-white dark:text-obsidian font-black text-[8px] sm:text-[9px] uppercase tracking-wider rounded hover:opacity-90 active:scale-95 transition-all cursor-pointer shadow flex-shrink-0">
+                      className="lp-focus flex-shrink-0 cursor-pointer rounded-full bg-sunset-deep px-3 py-1.5 text-[9px] font-semibold uppercase tracking-wider text-white transition-transform hover:-translate-y-0.5 active:translate-y-0">
                       {t("expenses.settle")}
                     </button>
                   </div>

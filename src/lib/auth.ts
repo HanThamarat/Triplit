@@ -2,8 +2,7 @@ import { betterAuth } from "better-auth";
 import { Pool } from "pg";
 import dotenv from "dotenv";
 import { dash } from "@better-auth/infra";
-// import { sendEmailSignUpVerifyOTP } from "./email-sender";
-// import { emailOTP } from "better-auth/plugins";
+import { encryptPassword, verifyPassword } from "@/lib/passowrd-hashing";
 
 dotenv.config();
 
@@ -25,36 +24,12 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true,
+        password: {
+            hash: async (passowrd) => encryptPassword(passowrd),
+            verify: async ({ password, hash }) => verifyPassword({ hash, password }),
+        }  
     },
-    // emailVerification: {
-    //     sendOnSignUp: true,
-    //     sendVerificationEmail: async ({ user, url, token }) => {
-    //         void sendEmailSignUpVerifyOTP({
-    //             email: user.email,
-    //             url: url,
-    //             userName: user.name,
-    //         });
-    //     }
-    // },
     plugins: [
-        // emailOTP({
-        //     sendVerificationOnSignUp: true,
-        //     async sendVerificationOTP({ email, otp, type }) {
-        //         // type is "sign-in" | "email-verification" | "forget-password"
-        //          const result = await sendEmail({
-        //             template: "verify-email-otp",
-        //             to: email,
-        //             variables: {
-        //                 otpCode: otp,        // use the otp the plugin gives you
-        //                 userEmail: email,
-        //                 appName: "Triplit",
-        //                 expirationMinutes: "10",
-        //             },
-        //         });
-
-        //         console.log("sendEmail result:", result);
-        //     },
-        // }),
         dash(),
     ]
 });

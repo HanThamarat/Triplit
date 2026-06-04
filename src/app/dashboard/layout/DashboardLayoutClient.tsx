@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FiBriefcase, FiCpu, FiDollarSign, FiLogOut, FiMenu, FiX, FiChevronDown } from "react-icons/fi";
 import { useDashboard } from "./DashboardContext";
-import ThemeToggle from "../../components/ThemeToggle";
 import LanguageToggle from "../../components/LanguageToggle";
 import Logo from "../../components/Logo";
 import { authClient } from "@/lib/auth-client";
@@ -35,8 +34,8 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
 
   if (!activeTrip) {
     return (
-      <div className="min-h-screen bg-pearl dark:bg-obsidian flex items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-pearl-border border-t-blue-primary dark:border-obsidian-border dark:border-t-gold" />
+      <div className="flex min-h-screen items-center justify-center bg-canvas">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-line border-t-sunset-deep" />
       </div>
     );
   }
@@ -70,16 +69,14 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
         <div className="flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-primary dark:focus-visible:ring-gold"
+            className="lp-focus flex items-center gap-2.5 rounded-lg transition-opacity hover:opacity-90"
           >
-            <Logo size={30} />
-            <span className="font-display text-lg font-extrabold tracking-tight text-slate-900 dark:text-stone-100">
-              triplit
-            </span>
+            <Logo size={30} className="!rounded-lg !shadow-none" />
+            <span className="font-serif text-2xl leading-none text-ink">triplit</span>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="rounded-lg p-1.5 text-slate-500 hover:bg-pearl-surface dark:text-stone-400 dark:hover:bg-obsidian-elevated lg:hidden cursor-pointer"
+            className="lp-focus cursor-pointer rounded-lg p-1.5 text-ink-faint hover:bg-shell hover:text-ink lg:hidden"
             aria-label={t("common.cancel")}
           >
             <FiX className="h-4 w-4" />
@@ -90,7 +87,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="trip-selector"
-            className="text-xs font-semibold text-slate-500 dark:text-stone-400"
+            className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-faint"
           >
             {t("dashboard.activeTrip")}
           </label>
@@ -99,7 +96,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
               id="trip-selector"
               value={selectedTripId}
               onChange={(e) => setSelectedTripId(e.target.value)}
-              className="w-full cursor-pointer appearance-none rounded-lg border border-pearl-border bg-pearl-surface px-3 py-2.5 pr-9 text-sm font-semibold text-slate-800 transition-colors focus:border-blue-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-primary/30 dark:border-obsidian-border dark:bg-obsidian dark:text-stone-200 dark:focus:border-gold dark:focus-visible:ring-gold/30"
+              className="w-full cursor-pointer appearance-none rounded-xl border border-line bg-canvas px-3 py-2.5 pr-9 text-sm font-semibold text-ink transition-colors focus:border-coast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coast/30"
             >
               {trips.map((trip) => (
                 <option key={trip.id} value={trip.id}>
@@ -108,7 +105,7 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
               ))}
             </select>
             <FiChevronDown
-              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-stone-500"
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint"
               aria-hidden
             />
           </div>
@@ -124,10 +121,10 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
                 href={path}
                 onClick={() => setSidebarOpen(false)}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-primary dark:focus-visible:ring-gold ${
+                className={`lp-focus flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
                   isActive
-                    ? "bg-blue-primary text-white shadow-sm dark:bg-gold dark:text-obsidian"
-                    : "text-slate-600 hover:bg-pearl-surface hover:text-slate-900 dark:text-stone-400 dark:hover:bg-obsidian-elevated dark:hover:text-stone-100"
+                    ? "bg-ink text-canvas"
+                    : "text-ink-soft hover:bg-shell hover:text-ink"
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0" aria-hidden /> {label}
@@ -138,19 +135,19 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
       </div>
 
       {/* User + sign out */}
-      <div className="mt-auto border-t border-pearl-border p-5 dark:border-obsidian-border">
+      <div className="mt-auto border-t border-line p-5">
         <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-primary to-blue-light text-xs font-bold text-white dark:from-gold dark:to-ember dark:text-obsidian">
+          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sunset text-xs font-semibold text-white">
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-slate-800 dark:text-stone-200">{user.name}</p>
-            <p className="truncate text-xs text-slate-500 dark:text-stone-400">{user.email}</p>
+            <p className="truncate text-sm font-semibold text-ink">{user.name}</p>
+            <p className="truncate text-xs text-ink-faint">{user.email}</p>
           </div>
         </div>
         <button
           onClick={signOut}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-pearl-border px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:border-rose-accent/40 hover:bg-rose-accent/10 hover:text-rose-accent dark:border-obsidian-border dark:text-stone-400 dark:hover:text-rose-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-accent cursor-pointer"
+          className="lp-focus flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-line px-3 py-2 text-xs font-semibold text-ink-soft transition-colors hover:border-sunset/40 hover:bg-sunset-wash hover:text-sunset-ink"
         >
           <FiLogOut className="h-3.5 w-3.5" aria-hidden /> {t("dashboard.logOut")}
         </button>
@@ -159,21 +156,18 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
   );
 
   return (
-    <div className="flex min-h-screen bg-pearl font-sans text-slate-900 dark:bg-obsidian dark:text-stone-100">
+    <div className="flex min-h-screen bg-canvas font-sans text-ink antialiased">
       {/* Mobile top bar */}
-      <header className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-pearl-border bg-pearl-card/95 px-4 py-3 backdrop-blur-sm dark:border-obsidian-border dark:bg-obsidian-card/95 lg:hidden">
+      <header className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-line bg-canvas/90 px-4 py-3 backdrop-blur-sm lg:hidden">
         <div className="flex items-center gap-2">
-          <Logo size={26} />
-          <span className="font-display text-base font-extrabold tracking-tight text-slate-900 dark:text-stone-100">
-            triplit
-          </span>
+          <Logo size={26} className="!rounded-lg !shadow-none" />
+          <span className="font-serif text-xl leading-none text-ink">triplit</span>
         </div>
         <div className="flex items-center gap-2">
           <LanguageToggle />
-          <ThemeToggle />
           <button
             onClick={() => setSidebarOpen(true)}
-            className="rounded-lg border border-pearl-border bg-pearl-card p-2 text-slate-600 dark:border-obsidian-border dark:bg-obsidian-card dark:text-stone-300 cursor-pointer"
+            className="lp-focus cursor-pointer rounded-lg border border-line bg-canvas p-2 text-ink-soft"
             aria-label="Open menu"
           >
             <FiMenu className="h-5 w-5" />
@@ -185,15 +179,13 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
             aria-hidden
           />
-          <aside className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col border-r border-pearl-border bg-pearl-card dark:border-obsidian-border dark:bg-obsidian-card">
-            {/* Toggles live in the mobile top bar; surface them in the drawer too */}
+          <aside className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col border-r border-line bg-canvas-sink">
             <div className="flex items-center justify-end gap-2 px-5 pt-4">
               <LanguageToggle />
-              <ThemeToggle />
             </div>
             {sidebarContent}
           </aside>
@@ -201,50 +193,49 @@ export default function DashboardLayoutClient({ user, children }: DashboardLayou
       )}
 
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-pearl-border bg-pearl-card dark:border-obsidian-border dark:bg-obsidian-card lg:flex">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-canvas-sink/70 lg:flex">
         <div className="flex items-center justify-end gap-2 px-5 pt-4">
           <LanguageToggle />
-          <ThemeToggle />
         </div>
         {sidebarContent}
       </aside>
 
       {/* Main workspace */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <main className="flex-1 px-4 pb-10 pt-[68px] sm:px-6 lg:px-8 lg:pt-8">
+        <main className="flex-1 px-4 pb-12 pt-[68px] sm:px-6 lg:px-8 lg:pt-8">
           {/* Page header */}
-          <header className="mb-6 flex flex-col gap-4 border-b border-pearl-border pb-5 dark:border-obsidian-border sm:flex-row sm:items-end sm:justify-between">
+          <header className="mb-7 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
               <nav
                 aria-label="Breadcrumb"
-                className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-stone-400"
+                className="flex items-center gap-1.5 text-xs font-medium text-ink-faint"
               >
                 <span>{t("dashboard.workspace")}</span>
                 <span aria-hidden>/</span>
-                <span className="truncate font-semibold text-blue-dark dark:text-gold">
+                <span className="truncate font-semibold text-coast-deep">
                   {activeTrip.name}
                 </span>
               </nav>
-              <h1 className="mt-1.5 font-display text-2xl font-extrabold tracking-tight text-slate-900 dark:text-stone-50 sm:text-[1.7rem]">
+              <h1 className="mt-1.5 font-serif text-[1.7rem] leading-tight tracking-[-0.01em] text-ink sm:text-3xl">
                 {pageTitle}
               </h1>
             </div>
 
             {/* Trip stats */}
-            <div className="flex items-center divide-x divide-pearl-border dark:divide-obsidian-border">
+            <div className="flex items-center divide-x divide-line">
               <div className="pr-5">
-                <p className="text-xs font-medium text-slate-500 dark:text-stone-400">
+                <p className="text-xs font-medium text-ink-faint">
                   {t("dashboard.totalCost")}
                 </p>
-                <p className="mt-0.5 text-lg font-extrabold tabular-nums text-ember">
+                <p className="mt-0.5 font-serif text-xl tabular-nums text-sunset-ink">
                   ${totalBudget.toFixed(2)}
                 </p>
               </div>
               <div className="pl-5">
-                <p className="text-xs font-medium text-slate-500 dark:text-stone-400">
+                <p className="text-xs font-medium text-ink-faint">
                   {t("dashboard.friends")}
                 </p>
-                <p className="mt-0.5 text-lg font-extrabold tabular-nums text-slate-900 dark:text-stone-100">
+                <p className="mt-0.5 font-serif text-xl tabular-nums text-ink">
                   {activeTrip.friends.length}
                 </p>
               </div>
