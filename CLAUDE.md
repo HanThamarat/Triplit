@@ -8,28 +8,28 @@ quick-reference.
 
 **Triplit** — a collaborative group‑travel app: plan trips, chat with a (mock) AI
 travel assistant, and split/settle shared expenses. Next.js App Router + React 19,
-TypeScript, Tailwind v4. Package manager is **pnpm**.
+TypeScript, Tailwind v4. Package manager is **npm**.
 
 ## Commands
 
 ```bash
-pnpm install              # install deps
-pnpm dev                  # Next dev server on http://localhost:3000
-pnpm build                # production build (output: "standalone")
-pnpm start                # run the production build
-pnpm lint                 # eslint (flat config, eslint.config.mjs)
+npm install               # install deps
+npm run dev               # Next dev server on http://localhost:3000
+npm run build             # production build (output: "standalone")
+npm start                 # run the production build
+npm run lint              # eslint (flat config, eslint.config.mjs)
 npx tsc --noEmit          # type-check only
 
 # Database (TypeORM CLI via typeorm.config.ts)
-pnpm migration:generate --name=SomeName
-pnpm migration:run
-pnpm migration:revert
+npm run migration:generate --name=SomeName
+npm run migration:run
+npm run migration:revert
 
 docker compose up         # Postgres (db "triplit", user/pass root) + web (Dockerfile.dev)
 ```
 
 There is no test runner configured. After changes, validate with
-`npx tsc --noEmit` + `pnpm lint`, and smoke-test routes against `pnpm dev`
+`npx tsc --noEmit` + `npm run lint`, and smoke-test routes against `npm run dev`
 (the landing `/` and `/authentication` pages are client-only and render without a DB).
 
 ## Stack & how the pieces fit

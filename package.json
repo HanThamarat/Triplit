@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "typeorm": "ts-node -r reflect-metadata ./node_modules/typeorm/cli.js --dataSource typeorm.config.ts",
-    "migration:generate": "pnpm typeorm migration:generate src/migrations/$npm_config_name",
-    "migration:run": "pnpm typeorm migration:run",
-    "migration:revert": "pnpm typeorm migration:revert",
-    "migration:create": "pnpm typeorm migration:create src/migrations/$npm_config_name"
+    "migration:generate": "npm run typeorm -- migration:generate src/migrations/$npm_config_name",
+    "migration:run": "npm run typeorm -- migration:run",
+    "migration:revert": "npm run typeorm -- migration:revert",
+    "migration:create": "npm run typeorm -- migration:create src/migrations/$npm_config_name"
   },
   "dependencies": {
     "@better-auth/infra": "^0.2.10",
@@ -23,7 +23,6 @@
     "better-auth": "^1.6.11",
     "dayjs": "^1.11.21",
     "dotenv": "^17.4.2",
-    "google": "link:@next/third-parties/google",
     "i": "^0.3.7",
     "next": "16.2.6",
     "nodemailer": "^8.0.10",

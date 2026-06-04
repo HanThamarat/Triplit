@@ -6,12 +6,10 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY package.json package-lock.json* ./
 RUN \
   if [ -f package-lock.json ]; then npm ci; \
-  elif [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f pnpm-lock.yaml ]; then npm i -g pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
+  else npm install; \
   fi
 
 # 2. Development Stage
@@ -27,9 +25,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD \
-  if [ -f package-lock.json ]; then npm run dev; \
-  elif [ -f yarn.lock ]; then yarn dev; \
-  elif [ -f pnpm-lock.yaml ]; then npm i -g pnpm && pnpm dev; \
-  else npm run dev; \
-  fi
+CMD ["npm", "run", "dev"]
