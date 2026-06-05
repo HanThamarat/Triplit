@@ -110,6 +110,9 @@ export const th: Dictionary = {
     createAccount: "สร้างบัญชี",
     signUpError: "สร้างบัญชีไม่สำเร็จ ลองอีกครั้งนะ",
     passwordRequirements: "รหัสผ่านต้องประกอบด้วย",
+    emailChecking: "กำลังตรวจสอบอีเมล…",
+    emailAvailable: "อีเมลนี้ใช้งานได้",
+    emailTaken: "อีเมลนี้ถูกใช้งานแล้ว ลองเข้าสู่ระบบแทน",
     checkEmailTitle: "ตรวจสอบอีเมลของคุณ",
     checkEmailBody: "เราส่งลิงก์ยืนยันไปที่ {email} แล้ว เปิดลิงก์เพื่อตั้งค่าบัญชีให้เสร็จสมบูรณ์",
     otp: {

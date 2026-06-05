@@ -3,6 +3,7 @@ import { Hanken_Grotesk, Young_Serif, Caveat } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
 import { LanguageProvider } from "@/i18n/LanguageProvider";
+import ReduxProvider from "@/lib/reduxProvider";
 
 // Body + UI everywhere. Friendly, highly legible grotesk (replaces the
 // previously doubled DM Sans, which loaded the same family for both roles).
@@ -66,7 +67,9 @@ export default function RootLayout({
       </head>
       <body className="font-sans min-h-screen bg-[#F8FAFD] text-slate-900 dark:bg-[#0A0A0F] dark:text-stone-100 transition-colors duration-500" cz-shortcut-listen="true">
         <LanguageProvider>
-          {children}
+          <ReduxProvider>
+            {children}
+          </ReduxProvider>
         </LanguageProvider>
       </body>
       <Analytics />
