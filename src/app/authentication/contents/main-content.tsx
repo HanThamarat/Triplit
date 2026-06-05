@@ -20,6 +20,7 @@ export default function AuthMain() {
   const pageState = searchParams.get("state");
   
   const [state, setState] = useState<"signin" | "signup">(() => pageState === "signup" ? "signup" : "signin");
+  const [otpShowing, setOtpShowing] = useState(false);
 
   useEffect(() => {
     if (!pageState) {
@@ -124,32 +125,36 @@ export default function AuthMain() {
 
         <div className="flex flex-1 items-center justify-center px-6 pb-12 pt-2 sm:px-8 lg:px-10">
           <div className="auth-rise-3 w-full max-w-[400px]">
-            <div className="mb-8">
-              <h1 className="font-serif text-[clamp(2rem,4vw,2.6rem)] leading-tight tracking-[-0.02em] text-ink [text-wrap:balance]">
-                {t("auth.welcome")}
-              </h1>
-              <p className="mt-2.5 text-[15px] leading-relaxed text-ink-soft [text-wrap:pretty]">
-                {t("auth.subtitle")}
-              </p>
-            </div>
+            {!otpShowing && (
+              <>
+                <div className="mb-8">
+                  <h1 className="font-serif text-[clamp(2rem,4vw,2.6rem)] leading-tight tracking-[-0.02em] text-ink [text-wrap:balance]">
+                    {t("auth.welcome")}
+                  </h1>
+                  <p className="mt-2.5 text-[15px] leading-relaxed text-ink-soft [text-wrap:pretty]">
+                    {t("auth.subtitle")}
+                  </p>
+                </div>
 
-            <div className=" duration-100 ease-in w-full bg-[#F8F2EB] p-[5px] mb-2.5 rounded-full flex justify-center gap-[5px]">
-                <button onClick={() => {
-                  router.push(path + "?" + createQueryString({ name: "state", value: "signin" }));
-                  setState("signin");
-                }} className={` cursor-pointer ${ state === "signin" ? 'bg-[#e6dfd8]' : 'bg-transparent' } w-full rounded-full py-[5px]`}>
-                  {t("auth.signIn")}
-                </button>
-                <button onClick={() => {
-                  router.push(path + "?" + createQueryString({ name: "state", value: "signup" }));
-                  setState("signup")
-                }} className={` cursor-pointer ${ state === "signup" ? 'bg-[#e6dfd8]' : 'bg-transparent' } w-full rounded-full py-[5px]`}>
-                  {t("auth.signUp")}
-                </button>
-            </div>
-            
+                <div className=" duration-100 ease-in w-full bg-[#F8F2EB] p-[5px] mb-2.5 rounded-full flex justify-center gap-[5px]">
+                    <button onClick={() => {
+                      router.push(path + "?" + createQueryString({ name: "state", value: "signin" }));
+                      setState("signin");
+                    }} className={` cursor-pointer ${ state === "signin" ? 'bg-[#e6dfd8]' : 'bg-transparent' } w-full rounded-full py-[5px]`}>
+                      {t("auth.signIn")}
+                    </button>
+                    <button onClick={() => {
+                      router.push(path + "?" + createQueryString({ name: "state", value: "signup" }));
+                      setState("signup")
+                    }} className={` cursor-pointer ${ state === "signup" ? 'bg-[#e6dfd8]' : 'bg-transparent' } w-full rounded-full py-[5px]`}>
+                      {t("auth.signUp")}
+                    </button>
+                </div>
+              </>
+            )}
+
             {
-              state === "signin" ? <SignIn /> : <SignUp />
+              state === "signin" ? <SignIn /> : <SignUp onOtpChange={setOtpShowing} />
             }
           </div>
         </div>

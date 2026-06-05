@@ -1,3 +1,4 @@
+import "server-only";
 import { sendEmail } from "@better-auth/infra";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";

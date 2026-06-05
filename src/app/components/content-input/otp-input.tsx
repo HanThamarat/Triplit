@@ -1,6 +1,12 @@
 "use client";
 
-import { Fragment, useEffect, useRef, type ClipboardEvent, type KeyboardEvent } from "react";
+import {
+    Fragment,
+    useLayoutEffect,
+    useRef,
+    type ClipboardEvent,
+    type KeyboardEvent,
+} from "react";
 
 interface OtpInputProps {
     /** The current code, a contiguous prefix string of up to `length` digits. */
@@ -20,9 +26,13 @@ interface OtpInputProps {
 
 /**
  * Segmented one-time-code field. Entry is always a left-to-right contiguous
- * prefix (no gaps): focus snaps to the first empty cell, typing auto-advances,
- * Backspace walks back, and a full paste fills the row. Numeric only; surfaces
+ * prefix (no gaps): typing auto-advances, Backspace walks back, and a paste
+ * fills the row from the start. Numeric only; surfaces
  * `autocomplete="one-time-code"` on the first cell so platforms can autofill.
+ *
+ * Focus is applied *after* React commits the new value (via a layout effect),
+ * never synchronously inside an input handler — doing it synchronously raced
+ * the controlled re-render and dropped the final digit / broke paste.
  */
 export default function OtpInput({
     value,
@@ -38,53 +48,56 @@ export default function OtpInput({
     const inputs = useRef<(HTMLInputElement | null)[]>([]);
     const cells = Array.from({ length }, (_, i) => value[i] ?? "");
 
-    useEffect(() => {
-        if (autoFocus) inputs.current[0]?.focus();
-    }, [autoFocus]);
+    // Handlers stash the cell to focus here; the layout effect applies it once
+    // the new value has rendered. `null` means "leave focus alone".
+    const focusTarget = useRef<number | null>(autoFocus ? 0 : null);
 
-    // A rejected code clears the row; send the caret back to the first cell so
-    // re-entry is immediate (no extra click after the shake).
-    useEffect(() => {
-        if (status === "error") inputs.current[0]?.focus();
-    }, [status]);
-
-    const focusCell = (i: number) => {
-        const clamped = Math.max(0, Math.min(i, length - 1));
-        const el = inputs.current[clamped];
+    const moveFocus = (i: number) => {
+        const el = inputs.current[Math.max(0, Math.min(i, length - 1))];
         el?.focus();
         el?.select();
     };
 
-    const emit = (raw: string) => {
-        const clean = raw.replace(/\D/g, "").slice(0, length);
-        onChange(clean);
-        if (clean.length === length) onComplete?.(clean);
-        return clean;
-    };
+    useLayoutEffect(() => {
+        if (focusTarget.current == null) return;
+        const target = focusTarget.current;
+        focusTarget.current = null;
+        moveFocus(target);
+    });
 
-    const writeFrom = (start: number, digits: string) => {
-        const chars = value.split("");
-        let i = start;
-        for (const ch of digits) {
+    // A rejected code clears the row; send the caret back to the first cell so
+    // re-entry is immediate (no extra click after the shake).
+    useLayoutEffect(() => {
+        if (status === "error") {
+            inputs.current[0]?.focus();
+            inputs.current[0]?.select();
+        }
+    }, [status]);
+
+    /**
+     * Contiguous write: clamp the start to the current length so we never leave
+     * a gap in the prefix, then emit. Used for typing, fast typing, and paste.
+     */
+    const writeAt = (start: number, raw: string) => {
+        const digits = raw.replace(/\D/g, "");
+        if (!digits) return;
+        const arr = value.split("");
+        let i = Math.min(start, arr.length);
+        for (const d of digits) {
             if (i >= length) break;
-            chars[i] = ch;
+            arr[i] = d;
             i += 1;
         }
-        emit(chars.join(""));
-        focusCell(Math.min(i, length - 1));
+        const next = arr.join("").replace(/\D/g, "").slice(0, length);
+        onChange(next);
+        if (next.length === length) onComplete?.(next);
+        focusTarget.current = i; // first empty cell (clamped on apply)
     };
 
     const handleInput = (index: number, raw: string) => {
-        const digits = raw.replace(/\D/g, "");
-        if (!digits) return; // deletions are handled in keydown
-        if (digits.length === 1) {
-            const chars = value.split("");
-            chars[index] = digits;
-            emit(chars.join(""));
-            focusCell(index + 1);
-        } else {
-            writeFrom(index, digits); // fast typing or a paste landing on input
-        }
+        // Deletions arrive here with an empty string; handle them in keydown.
+        if (!raw) return;
+        writeAt(index, raw);
     };
 
     const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
@@ -92,26 +105,26 @@ export default function OtpInput({
             e.preventDefault();
             if (value[index]) {
                 const next = value.slice(0, index) + value.slice(index + 1);
-                emit(next);
-                focusCell(Math.min(index, next.length));
+                onChange(next);
+                focusTarget.current = index;
             } else {
                 const prev = Math.max(0, index - 1);
-                emit(value.slice(0, prev) + value.slice(prev + 1));
-                focusCell(prev);
+                onChange(value.slice(0, prev) + value.slice(prev + 1));
+                focusTarget.current = prev;
             }
         } else if (e.key === "ArrowLeft") {
+            // No value change → no re-render → focus directly (no race).
             e.preventDefault();
-            focusCell(index - 1);
+            moveFocus(index - 1);
         } else if (e.key === "ArrowRight") {
             e.preventDefault();
-            focusCell(Math.min(index + 1, value.length));
+            moveFocus(Math.min(index + 1, value.length));
         }
     };
 
     const handlePaste = (index: number, e: ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
-        const text = e.clipboardData.getData("text").replace(/\D/g, "");
-        if (text) writeFrom(index, text);
+        writeAt(index, e.clipboardData.getData("text"));
     };
 
     return (
@@ -139,10 +152,7 @@ export default function OtpInput({
                         onChange={(e) => handleInput(i, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(i, e)}
                         onPaste={(e) => handlePaste(i, e)}
-                        onFocus={(e) => {
-                            if (i > value.length) focusCell(value.length);
-                            else e.target.select();
-                        }}
+                        onFocus={(e) => e.currentTarget.select()}
                         className={`h-14 min-w-0 flex-1 rounded-xl border bg-canvas text-center font-serif text-2xl tabular-nums caret-coast-deep transition-[border-color,box-shadow,background-color,color] duration-150 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 sm:h-16 ${
                             status === "error"
                                 ? "border-sunset-deep text-sunset-ink focus:border-sunset-deep focus:ring-sunset/30"

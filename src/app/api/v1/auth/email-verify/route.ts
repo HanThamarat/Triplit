@@ -31,8 +31,10 @@ export async function POST(req: NextRequest) {
             returning *
         `,
         [genNewuuid, email, String(code), date]);
-
-        console.log(verifyData);
+        
+        if (!verifyData) {
+            throw "Create a new verifycation failed, Plase try again later.";
+        }
 
         await emailTransport.sendMail({
             from: `Triplit <${FROM}>`,

@@ -110,6 +110,9 @@ export const en = {
     createAccount: "Create account",
     signUpError: "Couldn't create your account. Try again.",
     passwordRequirements: "Password must include",
+    emailChecking: "Checking availability…",
+    emailAvailable: "Email available",
+    emailTaken: "This email is already registered. Try signing in instead.",
     checkEmailTitle: "Check your email",
     checkEmailBody: "We sent a verification link to {email}. Open it to finish setting up your account.",
     otp: {

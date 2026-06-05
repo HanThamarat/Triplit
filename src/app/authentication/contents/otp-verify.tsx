@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -5,9 +6,12 @@ import { useRouter } from "next/navigation";
 import { FiArrowLeft, FiCheck, FiRefreshCw } from "react-icons/fi";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import OtpInput from "@/app/components/content-input/otp-input";
+import { useAppDispatch } from "@/lib/appDispatch";
+import { useSelector } from "react-redux";
+import { authSelector, confrimEmailVerify, confrimEmailVerifyProps, sendEmailVerify, sendEmailVerifyProps } from "@/store/slice/authSlice";
 
 const OTP_LENGTH = 6;
-const RESEND_COOLDOWN = 30;
+const RESEND_COOLDOWN = 60;
 const SEND_URL = "/api/v1/auth/email-verify";
 const CONFIRM_URL = "/api/v1/auth/email-verify/confirm";
 
@@ -25,22 +29,6 @@ interface OtpVerifyProps {
     onVerified?: () => void;
 }
 
-async function postJson(url: string, body: unknown) {
-    const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-    });
-    const data = await res.json().catch(() => ({}));
-    return { ok: res.ok, data } as { ok: boolean; data: { message?: string } };
-}
-
-/**
- * Code-entry screen for the custom email-verification flow. Sends a code on
- * mount (the caller just supplies the email), auto-verifies when all six digits
- * land, and resends on a 30s cooldown. All network goes through the project's
- * /api/v1/auth/email-verify routes — no better-auth.
- */
 export default function OtpVerify({
     email,
     purpose = "email-verification",
@@ -49,6 +37,8 @@ export default function OtpVerify({
 }: OtpVerifyProps) {
     const { t } = useLanguage();
     const router = useRouter();
+    const dispatch = useAppDispatch();
+    const { sendEmail, comfirmStatus } = useSelector(authSelector);
 
     const [code, setCode] = useState("");
     const [status, setStatus] = useState<Status>("idle");
@@ -88,8 +78,13 @@ export default function OtpVerify({
         if (isResend) setResendState("sending");
         setErrorKey(null);
         try {
-            const { ok } = await postJson(SEND_URL, { email });
-            if (!ok) throw new Error("send_failed");
+            const data: sendEmailVerifyProps = {
+                email
+            };
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const response: any = await dispatch(sendEmailVerify(data));
+            if (!response.payload.status) throw new Error("send_failed");
             setCooldown(RESEND_COOLDOWN);
             if (isResend) {
                 setCode("");
@@ -109,10 +104,15 @@ export default function OtpVerify({
         verifyingRef.current = true;
         setStatus("verifying");
         setErrorKey(null);
-        try {
-            const { ok, data } = await postJson(CONFIRM_URL, { email, code: value });
-            if (!ok) {
-                const reason = data?.message ?? "";
+        try {    
+            const data: confrimEmailVerifyProps = {
+                email: email,
+                code: value
+            }
+            const response: any = await dispatch(confrimEmailVerify(data));
+
+            if (!response.payload.status) {
+                const reason = response?.payload.error.message ?? "";
                 if (reason === "expired") showError("errorExpired");
                 else if (reason === "invalid") showError("errorInvalid");
                 else showError("errorGeneric");
@@ -121,7 +121,7 @@ export default function OtpVerify({
             setStatus("success");
             window.setTimeout(() => {
                 if (onVerified) onVerified();
-                else router.push("/dashboard");
+                else window.location.href = "/authentication?state=signin";
             }, 900);
         } catch {
             showError("errorGeneric");

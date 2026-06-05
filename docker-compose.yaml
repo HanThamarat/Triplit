@@ -15,7 +15,7 @@ services:
     networks:
       - triplit-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      test: ["CMD-SHELL", "pg_isready -U root -d triplit"]
       interval: 10s
       timeout: 5s
       retries: 5 
@@ -25,11 +25,16 @@ services:
     build:
       context: ./
       dockerfile: ${DOCKERFILE:-Dockerfile.dev}
-      target: development 
+      target: development
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+      # macOS Docker drops inotify events across the bind mount, so the dev
+      # watcher never sees host edits. Poll the filesystem instead so Fast
+      # Refresh works without restarting the container.
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./:/app
       - /app/node_modules/
